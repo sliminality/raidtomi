@@ -6,13 +6,15 @@
   "license": "Apache-2.0/MIT",
   "scripts": {
     "start": "parcel index.html",
-    "build": "parcel build index.html"
+    "build": "parcel build index.html",
+    "typecheck": "tsc --noEmit --watch"
   },
   "bin": {
     "create-rust-parcel": ".bin/create-rust-parcel.js"
   },
   "devDependencies": {
     "parcel-bundler": "^1.12.4",
-    "parcel-plugin-wasm.rs": "^1.2.16"
+    "parcel-plugin-wasm.rs": "^1.2.16",
+    "typescript": "^4.0.2"
   }
 }
