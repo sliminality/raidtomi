@@ -49,3 +49,8 @@ pub fn run() -> Result<(), JsValue> {
     Ok(())
 }
 
+#[wasm_bindgen]
+pub struct Foo {
+    pub a: u32,
+    pub b: u32,
+}
