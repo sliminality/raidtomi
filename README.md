@@ -1,22 +1,7 @@
-# `rust-parcel-template`
+# `raidtomi`
 
-**Kickstart your Rust, WebAssembly, and Parcel project!**
+idk pokemon max raids something something
 
-This template comes pre-configured with all the boilerplate for compiling Rust
-to WebAssembly and hooking into a Parcel build pipeline.
+Currently this is using Parcel, Rust, TypeScript, React.
 
-* `npm run start` -- Serve the project locally for
-  development at `http://localhost:1234`.
-
-* `npm run build` -- Bundle the project (in production mode)
-
-
-## Using This Template
-
-```sh
-cargo install wasm-pack
-```
-
-```sh
-npm init rust-parcel my-app
-```
+I deleted the licenses, was that bad?

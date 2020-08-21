@@ -1,11 +1,11 @@
 [package]
-authors = ["The RustWasm Developers"]
+authors = ["Sarah Lim"]
 categories = ["wasm"]
-description = "My super awesome Rust, WebAssembly, and Parcel project!"
+description = "Frame simulator for Pokemon Max Raids"
 license = "Apache-2.0/MIT"
-name = "rust-parcel"
+name = "raidtomi"
 readme = "./README.md"
-repository = "https://github.com/rustwasm/rust-parcel-template"
+repository = "https://github.com/sliminality/raidtomi"
 version = "0.1.0"
 
 [lib]

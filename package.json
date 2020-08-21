@@ -1,8 +1,8 @@
 {
-  "author": "Sendil Kumar N<sendilkumarn@live.com>",
-  "name": "create-rust-parcel",
-  "version": "0.0.2",
-  "repository": "https://github.com/rustwasm/rust-parcel-template",
+  "author": "Sarah Lim <slim@sarahlim.com>",
+  "name": "raidtomi",
+  "version": "0.0.1",
+  "repository": "https://github.com/sliminality/raidtomi",
   "license": "Apache-2.0/MIT",
   "scripts": {
     "start": "parcel index.html",
