@@ -14,6 +14,11 @@
  *    /// <reference path="./index.d.ts" />
  */
 /// <reference path="./index.d.ts" />
+
+import React from "react"
+import ReactDOM from "react-dom"
 import wasm from "../crate/Cargo.toml"
+
+ReactDOM.render(<h1>Hello world</h1>, document.getElementById("root"))
 
 wasm.run()
