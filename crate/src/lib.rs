@@ -1,5 +1,7 @@
 use wasm_bindgen::prelude::*;
 
+mod mon;
+mod raid;
 mod rng;
 
 cfg_if::cfg_if! {
