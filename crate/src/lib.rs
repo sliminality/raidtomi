@@ -1,13 +1,8 @@
-#[macro_use]
-extern crate cfg_if;
-
-extern crate wasm_bindgen;
-extern crate web_sys;
 use wasm_bindgen::prelude::*;
 
 mod rng;
 
-cfg_if! {
+cfg_if::cfg_if! {
     // When the `console_error_panic_hook` feature is enabled, we can call the
     // `set_panic_hook` function to get better error messages if we ever panic.
     if #[cfg(feature = "console_error_panic_hook")] {
@@ -19,7 +14,7 @@ cfg_if! {
     }
 }
 
-cfg_if! {
+cfg_if::cfg_if! {
     // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
     // allocator.
     if #[cfg(feature = "wee_alloc")] {
