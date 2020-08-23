@@ -5,6 +5,8 @@ extern crate wasm_bindgen;
 extern crate web_sys;
 use wasm_bindgen::prelude::*;
 
+mod rng;
+
 cfg_if! {
     // When the `console_error_panic_hook` feature is enabled, we can call the
     // `set_panic_hook` function to get better error messages if we ever panic.
@@ -42,7 +44,7 @@ pub fn run() -> Result<(), JsValue> {
 
     // Manufacture the element we're gonna append
     let val = document.create_element("p")?;
-    val.set_inner_html("Hello from Rust, WebAssembly, and Parcel!");
+    val.set_inner_html("wasm example running");
 
     body.append_child(&val)?;
 
