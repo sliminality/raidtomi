@@ -13,6 +13,6 @@
 //    /// <reference path="./index.d.ts" />
 //    I hope to God I don't have to do this in every file smh
 declare module "*.toml" {
-    const value: typeof import("../crate/pkg/rust_parcel")
+    const value: typeof import("../crate/pkg/raidtomi")
     export default value
 }
