@@ -1,9 +1,6 @@
 use wasm_bindgen::prelude::*;
 
-mod frame;
-mod mon;
-mod raid;
-mod rng;
+mod core;
 
 cfg_if::cfg_if! {
     // When the `console_error_panic_hook` feature is enabled, we can call the
