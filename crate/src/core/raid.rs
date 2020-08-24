@@ -5,11 +5,6 @@ use wasm_bindgen::prelude::*;
 /// Species of mon.
 type Species = u32; // TODO: Replace this with an enum eventually.
 
-/// Probability of rolling a mon for each star level.
-#[wasm_bindgen]
-#[derive(PartialEq, Eq, Debug, Copy, Clone)]
-pub struct RollProbability(pub u32, pub u32, pub u32, pub u32, pub u32);
-
 /// A raid mon can be randomly shiny, always shiny, or never shiny.
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
 pub enum ShinyPool {
@@ -76,7 +71,6 @@ impl GenderPool {
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
 pub struct Raid {
     species: Species,
-    probability: RollProbability,
     min_flawless_ivs: u32,
     alt_form: u32, // Only used for Toxtricity.
     is_gmax: bool,
@@ -88,7 +82,6 @@ pub struct Raid {
 impl Raid {
     pub fn new(
         species: Species,
-        probability: RollProbability,
         min_flawless_ivs: u32,
         alt_form: u32, // Only used for Toxtricity.
         is_gmax: bool,
@@ -99,7 +92,6 @@ impl Raid {
     ) -> Self {
         Raid {
             species,
-            probability,
             min_flawless_ivs,
             alt_form,
             is_gmax,

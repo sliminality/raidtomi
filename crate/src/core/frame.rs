@@ -1,6 +1,6 @@
 ///! Frame data.
 use super::mon::{get_toxtricity_nature, Ability, Gender, IVs, Nature, Shininess};
-use super::raid::{AbilityPool, GenderPool, Raid, RollProbability, ShinyPool};
+use super::raid::{AbilityPool, GenderPool, Raid, ShinyPool};
 use super::rng::Rng;
 use num_traits::FromPrimitive;
 use wasm_bindgen::prelude::*;
@@ -201,8 +201,7 @@ mod test {
         assert_eq!(
             FrameGenerator::new(
                 Raid::new(
-                    678, // Meowstic.
-                    RollProbability(0, 0, 0, 0, 15),
+                    678,   // Meowstic.
                     3,     // Guaranteed flawless IVs.
                     0,     // Alt form: N/A.
                     false, // Not G-max.
@@ -232,8 +231,7 @@ mod test {
         assert_eq!(
             FrameGenerator::new(
                 Raid::new(
-                    439, // Mime Jr.
-                    RollProbability(35, 0, 0, 0, 0),
+                    439,       // Mime Jr.
                     1,         // Guaranteed flawless IVs.
                     0,         // Alt form: N/A.
                     false,     // Not G-max.
@@ -263,8 +261,7 @@ mod test {
         assert_eq!(
             FrameGenerator::new(
                 Raid::new(
-                    40, // Wigglytuff.
-                    RollProbability(0, 0, 0, 0, 15),
+                    40,        // Wigglytuff.
                     4,         // Guaranteed flawless IVs.
                     0,         // Alt form: N/A.
                     false,     // Not G-max.
@@ -293,8 +290,7 @@ mod test {
         // HA-locked.
         let f = FrameGenerator::new(
             Raid::new(
-                40, // Wigglytuff.
-                RollProbability(0, 0, 0, 0, 15),
+                40,        // Wigglytuff.
                 4,         // Guaranteed flawless IVs.
                 0,         // Alt form: N/A.
                 false,     // Not G-max.
@@ -399,8 +395,7 @@ mod test {
         // Random gender.
         let f = FrameGenerator::new(
             Raid::new(
-                439, // Mime Jr.
-                RollProbability(35, 0, 0, 0, 0),
+                439,       // Mime Jr.
                 1,         // Guaranteed flawless IVs.
                 0,         // Alt form: N/A.
                 false,     // Not G-max.
