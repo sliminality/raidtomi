@@ -8,7 +8,7 @@ type Species = u32; // TODO: Replace this with an enum eventually.
 /// Probability of rolling a mon for each star level.
 #[wasm_bindgen]
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
-pub struct RollProbability(u32, u32, u32, u32, u32);
+pub struct RollProbability(pub u32, pub u32, pub u32, pub u32, pub u32);
 
 /// A raid mon can be randomly shiny, always shiny, or never shiny.
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
@@ -85,9 +85,7 @@ pub struct Raid {
     shiny: ShinyPool,
 }
 
-#[wasm_bindgen]
 impl Raid {
-    #[wasm_bindgen(constructor)]
     pub fn new(
         species: Species,
         probability: RollProbability,
@@ -109,5 +107,29 @@ impl Raid {
             gender: GenderPool::from(gender, gender_ratio),
             shiny: ShinyPool::from(shiny),
         }
+    }
+
+    pub fn get_shiny_pool(&self) -> ShinyPool {
+        self.shiny
+    }
+
+    pub fn get_min_flawless_ivs(&self) -> u32 {
+        self.min_flawless_ivs
+    }
+
+    pub fn get_ability_pool(&self) -> AbilityPool {
+        self.ability
+    }
+
+    pub fn get_gender_pool(&self) -> GenderPool {
+        self.gender
+    }
+
+    pub fn get_species(&self) -> Species {
+        self.species
+    }
+
+    pub fn get_alt_form(&self) -> u32 {
+        self.alt_form
     }
 }

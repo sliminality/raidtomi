@@ -48,11 +48,16 @@ impl Rng {
 
         result.0
     }
+
+    /// Returns the seed `i` frames ahead of the given seed.
+    pub fn get_seed_at_offset(seed: u64, index: usize) -> u64 {
+        (w(seed) + w(MAGIC_SEED) * w(index as u64)).0
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{Rng, MAGIC_SEED};
+    use super::*;
 
     /// Test generation of 64-bit integers.
     #[test]
@@ -100,5 +105,19 @@ mod tests {
         assert_eq!(rng.next_int_max(6, 0x7), 3);
         rng.reset(seed);
         assert_eq!(rng.next_int_max(6, 0x1), 1);
+    }
+
+    #[test]
+    fn test_get_seed_at_offset() {
+        let seed = 0x973bb011937bc1a8;
+        assert_eq!(Rng::get_seed_at_offset(seed, 0), seed);
+        assert_eq!(
+            Rng::get_seed_at_offset(seed, 1),
+            (w(seed) + w(MAGIC_SEED)).0
+        );
+        assert_eq!(
+            Rng::get_seed_at_offset(seed, 10_000_000),
+            0x9a1b9a62448a4128
+        );
     }
 }

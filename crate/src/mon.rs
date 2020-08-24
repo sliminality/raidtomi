@@ -1,3 +1,4 @@
+use super::rng::Rng;
 ///! Characteristics of a mon.
 use num_derive::{FromPrimitive, ToPrimitive};
 use wasm_bindgen::prelude::*;
@@ -5,9 +6,10 @@ use wasm_bindgen::prelude::*;
 /// Individual Values for a mon's stats.
 #[wasm_bindgen]
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
-pub struct IVs(u32, u32, u32, u32, u32, u32);
+pub struct IVs(pub u32, pub u32, pub u32, pub u32, pub u32, pub u32);
 
 /// Whether a mon is shiny, and if so, what type of shiny.
+#[wasm_bindgen]
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
 pub enum Shininess {
     None,
@@ -17,6 +19,7 @@ pub enum Shininess {
 
 /// What ability a mon has.
 /// Not all mons have a second ability or HA.
+#[wasm_bindgen]
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
 pub enum Ability {
     First,
@@ -25,6 +28,7 @@ pub enum Ability {
 }
 
 /// What gender a mon has.
+#[wasm_bindgen]
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
 pub enum Gender {
     Male,
@@ -34,6 +38,7 @@ pub enum Gender {
 
 /// What nature a mon has.
 /// Nature determines the pace of stat progression.
+#[wasm_bindgen]
 #[derive(PartialEq, Eq, Debug, Copy, Clone, FromPrimitive, ToPrimitive)]
 pub enum Nature {
     Hardy = 0,
@@ -61,6 +66,50 @@ pub enum Nature {
     Sassy = 22,
     Careful = 23,
     Quirky = 24,
+}
+
+// Toxtricity evolves into Amped Form if it has a certain set of natures,
+// and Low Key Form otherwise.
+static TOXTRICITY_AMPED_NATURES: [Nature; 12] = [
+    Nature::Lonely,
+    Nature::Bold,
+    Nature::Relaxed,
+    Nature::Timid,
+    Nature::Serious,
+    Nature::Modest,
+    Nature::Mild,
+    Nature::Quiet,
+    Nature::Bashful,
+    Nature::Calm,
+    Nature::Gentle,
+    Nature::Careful,
+];
+
+static TOXTRICITY_LOW_KEY_NATURES: [Nature; 13] = [
+    Nature::Hardy,
+    Nature::Brave,
+    Nature::Adamant,
+    Nature::Naughty,
+    Nature::Docile,
+    Nature::Impish,
+    Nature::Lax,
+    Nature::Hasty,
+    Nature::Jolly,
+    Nature::Naive,
+    Nature::Rash,
+    Nature::Sassy,
+    Nature::Quirky,
+];
+
+/// Generates a Toxtricity nature.
+pub fn get_toxtricity_nature(rng: &mut Rng, is_amped: bool) -> Nature {
+    if is_amped {
+        let index = rng.next_int_max(TOXTRICITY_AMPED_NATURES.len() as u32, 0x31);
+        TOXTRICITY_AMPED_NATURES[index as usize]
+    } else {
+        let index = rng.next_int_max(TOXTRICITY_LOW_KEY_NATURES.len() as u32, 0x31);
+        TOXTRICITY_LOW_KEY_NATURES[index as usize]
+    }
 }
 
 #[cfg(test)]

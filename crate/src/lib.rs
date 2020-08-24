@@ -1,5 +1,6 @@
 use wasm_bindgen::prelude::*;
 
+mod frame;
 mod mon;
 mod raid;
 mod rng;
