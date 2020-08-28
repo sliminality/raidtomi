@@ -6,7 +6,7 @@ use num_traits::FromPrimitive;
 use wasm_bindgen::prelude::*;
 
 /// Data for an individual frame of a given raid.
-#[wasm_bindgen]
+#[wasm_bindgen(inspectable)]
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
 pub struct Frame {
     seed: u64, // TODO: Exposing seed makes wasm-opt fail.
