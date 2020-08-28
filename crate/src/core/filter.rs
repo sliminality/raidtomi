@@ -244,6 +244,7 @@ pub struct FrameFilter {
 
 #[wasm_bindgen]
 impl FrameFilter {
+    #[wasm_bindgen(constructor)]
     pub fn new() -> Self {
         FrameFilter {
             shiny: None,
