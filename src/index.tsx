@@ -7,7 +7,7 @@
  *
  * 1) We define this module declaration, which uses wildcard module
  *    declarations (aka TypeScript's way of supporting non-JS loaders)
- *    and uses `typeof` to get the real types produced by wasm-bindgen
+//    and uses dynamic import() to get the real types produced by wasm-bindgen
  *    https://github.com/rustwasm/wasm-bindgen/issues/182#issuecomment-487928242
  *
  * 2) We need to import this `index.d.ts` file at the top of `index.ts`
@@ -17,8 +17,6 @@
 
 import React from "react"
 import ReactDOM from "react-dom"
-import wasm from "../crate/Cargo.toml"
+import { App } from "./components/App"
 
-ReactDOM.render(<h1>Hello world</h1>, document.getElementById("root"))
-
-wasm.run()
+ReactDOM.render(<App />, document.getElementById("root"))
