@@ -1,4 +1,5 @@
 ///! Frame data.
+use super::filter::{Filter, FrameFilter};
 use super::mon::{get_toxtricity_nature, Ability, Gender, IVs, Nature, Shininess};
 use super::raid::{AbilityPool, GenderPool, Raid, ShinyPool};
 use super::rng::Rng;
@@ -17,11 +18,30 @@ pub struct Frame {
     pub nature: Nature,
 }
 
+/// Describes the result of stepping one frame.
+#[derive(PartialEq, Eq, Debug, Copy, Clone)]
+pub enum FrameResult {
+    Fail,
+    Pass(Frame),
+}
+
+impl FrameResult {
+    /// Returns Some(Frame) if the result passed, and None otherwise.
+    pub fn get(&self) -> Option<Frame> {
+        if let &Self::Pass(f) = self {
+            Some(f)
+        } else {
+            None
+        }
+    }
+}
+
 /// Frame generator, taking an initial seed and raid and generating frames.
 #[wasm_bindgen(inspectable)]
 #[derive(PartialEq, Eq, Debug)]
 pub struct FrameGenerator {
     raid: Raid,
+    filter: Option<FrameFilter>,
     seed: u64,
     offset: u32,
     rng: Rng,
@@ -33,6 +53,7 @@ impl FrameGenerator {
     pub fn new(raid: Raid, seed: u64) -> Self {
         FrameGenerator {
             raid,
+            filter: None,
             seed,
             offset: 0,
             rng: Rng::new(seed),
@@ -46,15 +67,58 @@ impl FrameGenerator {
         self.offset += 1;
     }
 
+    /// Sets a filter to be applied to subsequent iterations.
+    pub fn set_filter(&mut self, filter: FrameFilter) {
+        self.filter = Some(filter);
+    }
+
+    /// Returns the current frame, mutating the RNG state, and checking if it passes a filter.
+    fn get_frame_filtered(&mut self, filter: &FrameFilter) -> FrameResult {
+        let shiny = self.get_shininess();
+        if let Some(f) = filter.shiny {
+            if !f.test(&shiny) {
+                return FrameResult::Fail;
+            }
+        }
+        let ivs = self.get_ivs();
+        if let Some(f) = filter.ivs {
+            if !f.test(&ivs) {
+                return FrameResult::Fail;
+            }
+        }
+        let ability = self.get_ability();
+        if let Some(f) = filter.ability {
+            if !f.test(&ability) {
+                return FrameResult::Fail;
+            }
+        }
+        let gender = self.get_gender();
+        if let Some(f) = filter.gender {
+            if !f.test(&gender) {
+                return FrameResult::Fail;
+            }
+        }
+        let nature = self.get_nature();
+
+        FrameResult::Pass(Frame {
+            seed: self.seed,
+            shiny,
+            ivs,
+            ability,
+            gender,
+            nature,
+        })
+    }
+
     /// Returns the current frame, mutating the RNG state.
-    fn get_frame(&mut self) -> Option<Frame> {
+    fn get_frame(&mut self) -> FrameResult {
         let shiny = self.get_shininess();
         let ivs = self.get_ivs();
         let ability = self.get_ability();
         let gender = self.get_gender();
         let nature = self.get_nature();
 
-        Some(Frame {
+        FrameResult::Pass(Frame {
             seed: self.seed,
             shiny,
             ivs,
@@ -181,18 +245,24 @@ impl FrameGenerator {
 }
 
 impl Iterator for FrameGenerator {
-    type Item = Frame;
+    type Item = FrameResult;
 
+    /// Generates frames endlessly.
     fn next(&mut self) -> Option<Self::Item> {
-        let result = self.get_frame();
+        let result = if let Some(filter) = self.filter {
+            self.get_frame_filtered(&filter)
+        } else {
+            self.get_frame()
+        };
         let next_seed = Rng::get_seed_at_offset(self.seed, 1);
         self.advance_seed(next_seed);
-        result
+        Some(result)
     }
 }
 
 #[cfg(test)]
 mod test {
+    use super::super::filter::{IVJudgment, ShinyFilter, SingleIVFilter};
     use super::*;
 
     #[test]
@@ -213,14 +283,14 @@ mod test {
                 0xc816c270fd1cd8fd
             )
             .next(),
-            Some(Frame {
+            Some(FrameResult::Pass(Frame {
                 seed: 0xc816c270fd1cd8fd,
                 shiny: Shininess::None,
                 ivs: IVs(31, 21, 12, 31, 15, 31),
                 nature: Nature::Brave,
                 ability: Ability::First,
                 gender: Gender::Female,
-            })
+            }))
         );
     }
 
@@ -243,14 +313,14 @@ mod test {
                 0x4ab973e61fba4358
             )
             .next(),
-            Some(Frame {
+            Some(FrameResult::Pass(Frame {
                 seed: 0x4ab973e61fba4358,
                 shiny: Shininess::None,
                 ivs: IVs(2, 29, 13, 22, 15, 31),
                 nature: Nature::Lonely,
                 ability: Ability::Second,
                 gender: Gender::Female,
-            })
+            }))
         );
     }
 
@@ -273,14 +343,14 @@ mod test {
                 0x775b846f76f1b25d
             )
             .next(),
-            Some(Frame {
+            Some(FrameResult::Pass(Frame {
                 seed: 0x775b846f76f1b25d,
                 shiny: Shininess::Star,
                 ivs: IVs(31, 1, 31, 31, 30, 31),
                 nature: Nature::Adamant,
                 ability: Ability::Hidden,
                 gender: Gender::Male,
-            })
+            }))
         );
     }
 
@@ -303,7 +373,7 @@ mod test {
         );
 
         assert_eq!(
-            f.take(10).collect::<Vec<Frame>>(),
+            f.take(10).filter_map(|f| f.get()).collect::<Vec<Frame>>(),
             vec![
                 Frame {
                     seed: 0x775b846f76f1b25d,
@@ -408,7 +478,7 @@ mod test {
         );
 
         assert_eq!(
-            f.take(10).collect::<Vec<Frame>>(),
+            f.take(10).filter_map(|f| f.get()).collect::<Vec<Frame>>(),
             vec![
                 Frame {
                     seed: 0x4ab973e61fba4358,
@@ -491,6 +561,111 @@ mod test {
                     gender: Gender::Male
                 },
             ]
+        );
+    }
+
+    #[test]
+    fn test_filtered_multi_frame_random_gender_no_ha() {
+        // Den 14, Shield.
+        // Random gender.
+        let mut f = FrameGenerator::new(
+            Raid::new(
+                439,       // Mime Jr.
+                1,         // Guaranteed flawless IVs.
+                0,         // Alt form: N/A.
+                false,     // Not G-max.
+                3,         // Random ability, no HA.
+                0,         // Random gender.
+                Some(127), // Gender ratio.
+                0,         // Random shininess.
+            ),
+            0x4ab973e61fba4358,
+        );
+
+        let filter = FrameFilter::new().set_ivs(
+            None,
+            None,
+            None,
+            None,
+            None,
+            Some(SingleIVFilter::new_at_least(IVJudgment::Best)),
+        );
+
+        f.set_filter(filter);
+
+        assert_eq!(
+            f.take(10).filter_map(|f| f.get()).collect::<Vec<Frame>>(),
+            vec![
+                Frame {
+                    seed: 0x4ab973e61fba4358,
+                    shiny: Shininess::None,
+                    ivs: IVs(2, 29, 13, 22, 15, 31),
+                    nature: Nature::Lonely,
+                    ability: Ability::Second,
+                    gender: Gender::Female
+                },
+                Frame {
+                    seed: 0xcd5c255b4257adb3,
+                    shiny: Shininess::None,
+                    ivs: IVs(26, 4, 0, 0, 3, 31),
+                    nature: Nature::Serious,
+                    ability: Ability::First,
+                    gender: Gender::Male
+                },
+                Frame {
+                    seed: 0x5fceff8f34a59630,
+                    shiny: Shininess::None,
+                    ivs: IVs(2, 2, 18, 12, 30, 31),
+                    nature: Nature::Lonely,
+                    ability: Ability::Second,
+                    gender: Gender::Female
+                },
+            ]
+        );
+    }
+
+    #[test]
+    fn test_search() {
+        // Excadrill.
+        let mut f = FrameGenerator::new(
+            Raid::new(
+                530,       // Excadrill.
+                4,         // Guaranteed flawless IVs.
+                0,         // Alt form: N/A.
+                false,     // Not G-max.
+                4,         // Random ability, HA possible.
+                0,         // Random gender.
+                Some(127), // Gender ratio.
+                0,         // Random shininess.
+            ),
+            0xc816c270fd1cd8fd,
+        );
+
+        let filter = FrameFilter::new()
+            .set_ivs(
+                None,
+                Some(SingleIVFilter::new_at_most(IVJudgment::NoGood)),
+                None,
+                None,
+                None,
+                None,
+            )
+            .set_shiny(ShinyFilter::Square);
+
+        f.set_filter(filter);
+
+        assert_eq!(
+            f.find(|&f| if let Some(_) = f.get() { true } else { false })
+                .map(|f| f.get())
+                .flatten(),
+            Some(Frame {
+                seed: 0x88a8f2e0e6cc5931,
+                shiny: Shininess::Square,
+                ivs: IVs(31, 0, 9, 31, 31, 31),
+                nature: Nature::Careful,
+                ability: Ability::Second,
+                gender: Gender::Male
+            })
         );
     }
 }
