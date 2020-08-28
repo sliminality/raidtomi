@@ -3,7 +3,7 @@ use super::mon::{Ability, Gender};
 use wasm_bindgen::prelude::*;
 
 /// Species of mon.
-type Species = u32; // TODO: Replace this with an enum eventually.
+pub type Species = u32; // TODO: Replace this with an enum eventually.
 
 /// A raid mon can be randomly shiny, always shiny, or never shiny.
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
