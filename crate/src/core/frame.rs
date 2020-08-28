@@ -6,6 +6,19 @@ use super::rng::Rng;
 use num_traits::FromPrimitive;
 use wasm_bindgen::prelude::*;
 
+/// We can't expose a u64 to JavaScript, so break the seed into two u32s.
+#[wasm_bindgen]
+pub struct Seed(pub u32, pub u32);
+
+#[wasm_bindgen]
+impl Seed {
+    pub fn from_u64(n: u64) -> Self {
+        let msbs = n >> 32;
+        let lsbs = n & 0xffff_ffff;
+        Seed(msbs as u32, lsbs as u32)
+    }
+}
+
 /// Data for an individual frame of a given raid.
 #[wasm_bindgen(inspectable)]
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
@@ -16,6 +29,13 @@ pub struct Frame {
     pub ability: Ability,
     pub gender: Gender,
     pub nature: Nature,
+}
+
+#[wasm_bindgen]
+impl Frame {
+    pub fn get_seed(&self) -> Seed {
+        Seed::from_u64(self.seed)
+    }
 }
 
 /// Describes the result of stepping one frame.
