@@ -43,6 +43,14 @@ impl Mon {
             included: ((buf[33] >> 6) & 1) == 1,
         }
     }
+}
+
+#[wasm_bindgen]
+impl Mon {
+    /// Returns the gender ratio.
+    pub fn get_gender_ratio(&self) -> u8 {
+        self.gender_ratio
+    }
 
     /// Returns the index of the first alternate form.
     pub fn get_form_index(&self) -> usize {
@@ -55,13 +63,20 @@ impl Mon {
     }
 }
 
+#[wasm_bindgen]
 #[derive(PartialEq, Eq, Debug, Clone)]
 pub struct PersonalTable {
     entries: Vec<Mon>,
 }
 
 impl<'a> PersonalTable {
+    /// Initializes from an in-memory Vec.
+    pub fn new(entries: Vec<Mon>) -> Self {
+        PersonalTable { entries }
+    }
+
     /// Reads the personal table binary format into a vector of entries.
+    #[allow(dead_code)]
     pub fn from_bytes(path: &str) -> io::Result<Self> {
         let mut f = File::open(path)?;
         let mut buffer = [0; ENTRY_SIZE];
@@ -92,6 +107,14 @@ impl<'a> PersonalTable {
         } else {
             None
         }
+    }
+}
+
+#[wasm_bindgen]
+impl PersonalTable {
+    /// Returns the personal info for a given mon and form.
+    pub fn get_info_copy(&self, species: usize, form: usize) -> Option<Mon> {
+        self.get_info(species, form).cloned()
     }
 }
 
