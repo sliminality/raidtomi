@@ -246,7 +246,7 @@ impl FrameGenerator {
                 ratio if ratio == 254 => Gender::Female,     // Mon is always female.
                 ratio if ratio == 0 => Gender::Male,         // Mon is always male.
                 // Roll for gender if species isn't locked.
-                _ if self.rng.next_int_max(253, 0xff) + 1 < gender_ratio => Gender::Female,
+                _ if self.rng.next_int_max(253, 0xff) + 1 < gender_ratio as u32 => Gender::Female,
                 _ => Gender::Male,
             },
         }

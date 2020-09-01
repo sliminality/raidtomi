@@ -37,10 +37,10 @@ pub fn run() -> Result<(), JsValue> {
 /// Return a Raid configuration from parameters.
 #[wasm_bindgen]
 pub fn create_raid(
-    min_flawless_ivs: u32,
-    ability: u32,
-    gender: u32,
-    gender_ratio: Option<u32>,
+    min_flawless_ivs: u8,
+    ability: u8,
+    gender: u8,
+    gender_ratio: Option<u8>,
 ) -> Raid {
     Raid::new(
         0, // TODO: Replace with real species id!

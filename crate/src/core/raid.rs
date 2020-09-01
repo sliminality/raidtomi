@@ -12,9 +12,9 @@ pub enum ShinyPool {
     Locked(bool),
 }
 
-impl From<u32> for ShinyPool {
+impl From<u8> for ShinyPool {
     // Converts a u32 into a ShinyPool, based on the game's encoding.
-    fn from(n: u32) -> Self {
+    fn from(n: u8) -> Self {
         match n {
             n if n == 0 => ShinyPool::Random,
             n if n == 1 => ShinyPool::Locked(false),
@@ -31,9 +31,9 @@ pub enum AbilityPool {
     Locked(Ability),
 }
 
-impl From<u32> for AbilityPool {
+impl From<u8> for AbilityPool {
     // Converts a u32 into a AbilityPool, based on the game's encoding.
-    fn from(n: u32) -> Self {
+    fn from(n: u8) -> Self {
         match n {
             n if n == 4 => AbilityPool::Random,
             n if n == 3 => AbilityPool::NoHA,
@@ -48,13 +48,13 @@ impl From<u32> for AbilityPool {
 /// Which genders can be rolled.
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
 pub enum GenderPool {
-    Random(u32),
+    Random(u8),
     Locked(Gender),
 }
 
 impl GenderPool {
     // Converts a u32 into a GenderPool, based on the game's encoding.
-    fn from(n: u32, ratio: Option<u32>) -> Self {
+    fn from(n: u8, ratio: Option<u8>) -> Self {
         match n {
             n if n == 0 => GenderPool::Random(ratio.unwrap()),
             n if n == 1 => GenderPool::Locked(Gender::Male),
@@ -71,8 +71,8 @@ impl GenderPool {
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
 pub struct Raid {
     species: Species,
-    min_flawless_ivs: u32,
-    alt_form: u32, // Only used for Toxtricity.
+    min_flawless_ivs: u8,
+    alt_form: u8,
     is_gmax: bool,
     ability: AbilityPool,
     gender: GenderPool,
@@ -82,13 +82,13 @@ pub struct Raid {
 impl Raid {
     pub fn new(
         species: Species,
-        min_flawless_ivs: u32,
-        alt_form: u32, // Only used for Toxtricity.
+        min_flawless_ivs: u8,
+        alt_form: u8,
         is_gmax: bool,
-        ability: u32,
-        gender: u32,
-        gender_ratio: Option<u32>,
-        shiny: u32,
+        ability: u8,
+        gender: u8,
+        gender_ratio: Option<u8>,
+        shiny: u8,
     ) -> Self {
         Raid {
             species,
@@ -105,7 +105,7 @@ impl Raid {
         self.shiny
     }
 
-    pub fn get_min_flawless_ivs(&self) -> u32 {
+    pub fn get_min_flawless_ivs(&self) -> u8 {
         self.min_flawless_ivs
     }
 
@@ -121,7 +121,7 @@ impl Raid {
         self.species
     }
 
-    pub fn get_alt_form(&self) -> u32 {
+    pub fn get_alt_form(&self) -> u8 {
         self.alt_form
     }
 }
