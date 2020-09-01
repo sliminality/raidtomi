@@ -1,0 +1,9 @@
+body {
+    font-family: "SF Mono", Inconsolata, Monaco, Courier, monospace;
+}
+
+div {
+    border: 1px solid black;
+    padding: 10px;
+    margin-bottom: 10px;
+}
