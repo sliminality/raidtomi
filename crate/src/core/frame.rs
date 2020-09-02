@@ -47,11 +47,20 @@ pub enum FrameResult {
 
 impl FrameResult {
     /// Returns Some(Frame) if the result passed, and None otherwise.
-    pub fn get(&self) -> Option<Frame> {
-        if let &Self::Pass(f) = self {
+    pub fn to_option(self) -> Option<Frame> {
+        if let Self::Pass(f) = self {
             Some(f)
         } else {
             None
+        }
+    }
+
+    /// Returns true if the result passed, and false otherwise.
+    pub fn is_pass(&self) -> bool {
+        if let &Self::Pass(_) = self {
+            true
+        } else {
+            false
         }
     }
 }
@@ -385,7 +394,9 @@ mod test {
         );
 
         assert_eq!(
-            f.take(10).filter_map(|f| f.get()).collect::<Vec<Frame>>(),
+            f.take(10)
+                .filter_map(FrameResult::to_option)
+                .collect::<Vec<Frame>>(),
             vec![
                 Frame {
                     seed: 0x775b846f76f1b25d,
@@ -488,7 +499,9 @@ mod test {
         );
 
         assert_eq!(
-            f.take(10).filter_map(|f| f.get()).collect::<Vec<Frame>>(),
+            f.take(10)
+                .filter_map(FrameResult::to_option)
+                .collect::<Vec<Frame>>(),
             vec![
                 Frame {
                     seed: 0x4ab973e61fba4358,
@@ -602,7 +615,9 @@ mod test {
         f.set_filter(filter);
 
         assert_eq!(
-            f.take(10).filter_map(|f| f.get()).collect::<Vec<Frame>>(),
+            f.take(10)
+                .filter_map(FrameResult::to_option)
+                .collect::<Vec<Frame>>(),
             vec![
                 Frame {
                     seed: 0x4ab973e61fba4358,
@@ -661,8 +676,8 @@ mod test {
         f.set_filter(filter);
 
         assert_eq!(
-            f.find(|&f| if let Some(_) = f.get() { true } else { false })
-                .map(|f| f.get())
+            f.find(FrameResult::is_pass)
+                .map(FrameResult::to_option)
                 .flatten(),
             Some(Frame {
                 seed: 0x88a8f2e0e6cc5931,

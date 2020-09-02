@@ -4,7 +4,7 @@ mod core;
 mod personal_data;
 
 use self::core::filter::FrameFilter;
-use self::core::frame::{Frame, FrameGenerator};
+use self::core::frame::{Frame, FrameGenerator, FrameResult};
 use self::core::raid::Raid;
 use js_sys;
 use std::iter::FromIterator;
@@ -39,7 +39,11 @@ pub fn run() -> Result<(), JsValue> {
 #[wasm_bindgen]
 pub fn list_frames(raid: Raid, seed: u64, num_frames: usize) -> js_sys::Array {
     let f = FrameGenerator::new(raid, seed);
-    let frames = f.take(num_frames).map(|f| f.get()).map(JsValue::from);
+    let frames = f
+        .take(num_frames)
+        .map(FrameResult::to_option)
+        .map(JsValue::from);
+
     js_sys::Array::from_iter(frames)
 }
 
@@ -48,8 +52,8 @@ pub fn list_frames(raid: Raid, seed: u64, num_frames: usize) -> js_sys::Array {
 pub fn search(raid: Raid, seed: u64, filter: FrameFilter) -> Frame {
     let mut f = FrameGenerator::new(raid, seed);
     f.set_filter(filter);
-    f.find(|&f| if let Some(_) = f.get() { true } else { false })
-        .map(|f| f.get())
+    f.find(FrameResult::is_pass)
+        .map(FrameResult::to_option)
         .flatten()
         .unwrap()
 }
