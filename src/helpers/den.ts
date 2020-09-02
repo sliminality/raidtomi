@@ -1,3 +1,7 @@
+import crate from "../../crate/Cargo.toml"
+
+import type { Raid } from "../../crate/pkg/raidtomi"
+
 export type DenEncounter = {
     species: number // National Dex number.
     altForm: number // Index of alt form. 0 is base form.
@@ -12,6 +16,17 @@ export type Den = {
     id: string
     sw: Array<DenEncounter> // Sword entries.
     sh: Array<DenEncounter> // Shield entries.
+}
+
+export function createRaid(encounter: DenEncounter): Raid {
+    return new crate.Raid(
+        encounter.species,
+        encounter.altForm,
+        encounter.minFlawlessIVs,
+        encounter.isGmax,
+        encounter.abilityPool,
+        encounter.genderPool
+    )
 }
 
 export const dens: Array<Den> = [
