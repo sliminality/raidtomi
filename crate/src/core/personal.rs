@@ -26,6 +26,38 @@ pub struct Mon {
 const ENTRY_SIZE: usize = 0xB0;
 
 impl Mon {
+    pub fn new(
+        hp: u8,
+        atk: u8,
+        def: u8,
+        spe: u8,
+        spa: u8,
+        spd: u8,
+        gender_ratio: u8,
+        ability_1: u16,
+        ability_2: u16,
+        ability_hidden: u16,
+        form_stat_index: u16,
+        form_count: u8,
+        included: bool,
+    ) -> Self {
+        Mon {
+            hp,
+            atk,
+            def,
+            spe,
+            spa,
+            spd,
+            gender_ratio,
+            ability_1,
+            ability_2,
+            ability_hidden,
+            form_stat_index,
+            form_count,
+            included,
+        }
+    }
+
     pub fn from_bytes(buf: &[u8; ENTRY_SIZE]) -> Self {
         Mon {
             hp: buf[0],
@@ -107,14 +139,6 @@ impl<'a> PersonalTable {
         } else {
             None
         }
-    }
-}
-
-#[wasm_bindgen]
-impl PersonalTable {
-    /// Returns the personal info for a given mon and form.
-    pub fn get_info_copy(&self, species: usize, form: usize) -> Option<Mon> {
-        self.get_info(species, form).cloned()
     }
 }
 

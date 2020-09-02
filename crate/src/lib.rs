@@ -1,6 +1,7 @@
 use wasm_bindgen::prelude::*;
 
 mod core;
+mod personal_data;
 
 use self::core::filter::FrameFilter;
 use self::core::frame::{Frame, FrameGenerator};
