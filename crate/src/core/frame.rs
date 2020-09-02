@@ -292,13 +292,11 @@ mod test {
             FrameGenerator::new(
                 Raid::new(
                     678,   // Meowstic.
-                    3,     // Guaranteed flawless IVs.
                     0,     // Alt form: N/A.
+                    3,     // Guaranteed flawless IVs.
                     false, // Not G-max.
                     3,     // Random ability, no HA.
                     2,     // Gender-locked female.
-                    None,  // Gender ratio N/A.
-                    0,     // Random shininess.
                 ),
                 0xc816c270fd1cd8fd
             )
@@ -321,14 +319,12 @@ mod test {
         assert_eq!(
             FrameGenerator::new(
                 Raid::new(
-                    439,       // Mime Jr.
-                    1,         // Guaranteed flawless IVs.
-                    0,         // Alt form: N/A.
-                    false,     // Not G-max.
-                    3,         // Random ability, no HA.
-                    0,         // Random gender.
-                    Some(127), // Gender ratio.
-                    0,         // Random shininess.
+                    439,   // Mime Jr.
+                    0,     // Alt form: N/A.
+                    1,     // Guaranteed flawless IVs.
+                    false, // Not G-max.
+                    3,     // Random ability, no HA.
+                    0,     // Random gender.
                 ),
                 0x4ab973e61fba4358
             )
@@ -351,14 +347,12 @@ mod test {
         assert_eq!(
             FrameGenerator::new(
                 Raid::new(
-                    40,        // Wigglytuff.
-                    4,         // Guaranteed flawless IVs.
-                    0,         // Alt form: N/A.
-                    false,     // Not G-max.
-                    2,         // HA-locked.
-                    0,         // Random gender.
-                    Some(191), // Gender ratio.
-                    0,         // Random shininess.
+                    40,    // Wigglytuff.
+                    0,     // Alt form: N/A.
+                    4,     // Guaranteed flawless IVs.
+                    false, // Not G-max.
+                    2,     // HA-locked.
+                    0,     // Random gender.
                 ),
                 0x775b846f76f1b25d
             )
@@ -380,14 +374,12 @@ mod test {
         // HA-locked.
         let f = FrameGenerator::new(
             Raid::new(
-                40,        // Wigglytuff.
-                4,         // Guaranteed flawless IVs.
-                0,         // Alt form: N/A.
-                false,     // Not G-max.
-                2,         // HA-locked.
-                0,         // Random gender.
-                Some(191), // Gender ratio.
-                0,         // Random shininess.
+                40,    // Wigglytuff.
+                0,     // Alt form: N/A.
+                4,     // Guaranteed flawless IVs.
+                false, // Not G-max.
+                2,     // HA-locked.
+                0,     // Random gender.
             ),
             0x775b846f76f1b25d,
         );
@@ -485,14 +477,12 @@ mod test {
         // Random gender.
         let f = FrameGenerator::new(
             Raid::new(
-                439,       // Mime Jr.
-                1,         // Guaranteed flawless IVs.
-                0,         // Alt form: N/A.
-                false,     // Not G-max.
-                3,         // Random ability, no HA.
-                0,         // Random gender.
-                Some(127), // Gender ratio.
-                0,         // Random shininess.
+                439,   // Mime Jr.
+                0,     // Alt form: N/A.
+                1,     // Guaranteed flawless IVs.
+                false, // Not G-max.
+                3,     // Random ability, no HA.
+                0,     // Random gender.
             ),
             0x4ab973e61fba4358,
         );
@@ -590,14 +580,12 @@ mod test {
         // Random gender.
         let mut f = FrameGenerator::new(
             Raid::new(
-                439,       // Mime Jr.
-                1,         // Guaranteed flawless IVs.
-                0,         // Alt form: N/A.
-                false,     // Not G-max.
-                3,         // Random ability, no HA.
-                0,         // Random gender.
-                Some(127), // Gender ratio.
-                0,         // Random shininess.
+                439,   // Mime Jr.
+                0,     // Alt form: N/A.
+                1,     // Guaranteed flawless IVs.
+                false, // Not G-max.
+                3,     // Random ability, no HA.
+                0,     // Random gender.
             ),
             0x4ab973e61fba4358,
         );
@@ -649,14 +637,12 @@ mod test {
         // Excadrill.
         let mut f = FrameGenerator::new(
             Raid::new(
-                530,       // Excadrill.
-                4,         // Guaranteed flawless IVs.
-                0,         // Alt form: N/A.
-                false,     // Not G-max.
-                4,         // Random ability, HA possible.
-                0,         // Random gender.
-                Some(127), // Gender ratio.
-                0,         // Random shininess.
+                530,   // Excadrill.
+                0,     // Alt form: N/A.
+                4,     // Guaranteed flawless IVs.
+                false, // Not G-max.
+                4,     // Random ability, HA possible.
+                0,     // Random gender.
             ),
             0xc816c270fd1cd8fd,
         );

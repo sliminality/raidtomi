@@ -1,4 +1,5 @@
 ///! Raid generation parameters.
+use super::super::personal_data::get_personal_info;
 use super::mon::{Ability, Gender};
 use wasm_bindgen::prelude::*;
 
@@ -79,28 +80,33 @@ pub struct Raid {
     shiny: ShinyPool,
 }
 
+#[wasm_bindgen]
 impl Raid {
+    #[wasm_bindgen(constructor)]
     pub fn new(
         species: Species,
-        min_flawless_ivs: u8,
         alt_form: u8,
+        min_flawless_ivs: u8,
         is_gmax: bool,
-        ability: u8,
-        gender: u8,
-        gender_ratio: Option<u8>,
-        shiny: u8,
+        ability_pool: u8,
+        gender_pool: u8,
     ) -> Self {
+        let gender_ratio =
+            get_personal_info(species as usize, alt_form as usize).map(|pi| pi.get_gender_ratio());
+
         Raid {
             species,
             min_flawless_ivs,
             alt_form,
             is_gmax,
-            ability: AbilityPool::from(ability),
-            gender: GenderPool::from(gender, gender_ratio),
-            shiny: ShinyPool::from(shiny),
+            ability: AbilityPool::from(ability_pool),
+            gender: GenderPool::from(gender_pool, gender_ratio),
+            shiny: ShinyPool::Random,
         }
     }
+}
 
+impl Raid {
     pub fn get_shiny_pool(&self) -> ShinyPool {
         self.shiny
     }

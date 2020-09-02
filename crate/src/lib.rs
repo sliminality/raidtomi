@@ -35,26 +35,6 @@ pub fn run() -> Result<(), JsValue> {
     Ok(())
 }
 
-/// Return a Raid configuration from parameters.
-#[wasm_bindgen]
-pub fn create_raid(
-    min_flawless_ivs: u8,
-    ability: u8,
-    gender: u8,
-    gender_ratio: Option<u8>,
-) -> Raid {
-    Raid::new(
-        0, // TODO: Replace with real species id!
-        min_flawless_ivs,
-        0,
-        false,
-        ability,
-        gender,
-        gender_ratio,
-        0,
-    )
-}
-
 /// List a certain number of frames, beginning with some seed.
 #[wasm_bindgen]
 pub fn list_frames(raid: Raid, seed: u64, num_frames: usize) -> js_sys::Array {
