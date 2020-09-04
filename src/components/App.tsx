@@ -37,23 +37,28 @@ export function App(): JSX.Element {
     const updateSettings = (update: Partial<settings.Settings>) => {
         const current = state.settings
 
-        // Changing the game title affects the tables for each den.
-        // This may affect the available filters.
-        if (update.gameTitle && update.gameTitle !== current.gameTitle) {
+        // Changing the game title or badge level affects the tables for each den,
+        // which can affect the gender pool, so we reset the gender filter.
+        const shouldResetGenderFilter =
+            (update.gameTitle && update.gameTitle !== current.gameTitle) ||
+            (update.badgeLevel && update.badgeLevel !== current.badgeLevel)
+
+        const nextState = {
+            ...state,
+            settings: { ...state.settings, ...update },
+            ...(shouldResetGenderFilter && {
+                filters: { ...state.filters, gender: undefined },
+            }),
         }
 
-        // Changing the badge level affects the tables for each den.
-        if (update.gameTitle && update.gameTitle !== current.gameTitle) {
-        }
-
-        setState({ ...state, settings: { ...state.settings, ...update } })
+        setState(nextState)
     }
     const updateRaid = (update: Partial<RaidData>) => {
-        // Changing the den affects the mon entries.
-        // Changing the mon affects filter legality.
         setState({
             ...state,
             raid: { ...state.raid, ...update },
+            // Since the new mon may have different gender lock, reset the gender filter.
+            filters: { ...state.filters, gender: undefined },
         })
     }
     const updateFilters = (update: Partial<Filters>) => {
@@ -87,7 +92,7 @@ export function App(): JSX.Element {
     return (
         <React.Fragment>
             <SettingsForm value={state.settings} updateValue={updateSettings} />
-            <details open={true}>
+            <details open={false}>
                 <summary>Raid</summary>
                 <RaidForm
                     value={state.raid}
