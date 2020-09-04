@@ -37,9 +37,13 @@ export function App() {
 
         setState({ ...state, settings: { ...state.settings, ...update } })
     }
-    const updateRaid = () => {
+    const updateRaid = (update: Partial<state.Raid>) => {
         // Changing the den affects the mon entries.
         // Changing the mon affects filter legality.
+        setState({
+            ...state,
+            raid: { ...state.raid, ...update },
+        })
     }
     const updateFilters = (update: Partial<state.Filters>) => {}
 

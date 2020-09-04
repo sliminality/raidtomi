@@ -1,4 +1,5 @@
 import crate from "../../crate/Cargo.toml"
+import * as species from "./species"
 import * as state from "../state"
 
 import type { Raid } from "../../crate/pkg/raidtomi"
@@ -19,6 +20,21 @@ export type Den = {
     sh: Array<DenEncounter> // Shield entries.
 }
 
+export const enum AbilityPool {
+    Random = 4,
+    RandomNoHA = 3,
+    FixedHA = 2,
+    FixedSecond = 1,
+    FixedFirst = 0,
+}
+
+export const enum GenderPool {
+    Random = 0,
+    LockedMale = 1,
+    LockedFemale = 2,
+    LockedGenderless = 3,
+}
+
 export function createRaid(encounter: DenEncounter): Raid {
     return new crate.Raid(
         encounter.species,
@@ -28,6 +44,10 @@ export function createRaid(encounter: DenEncounter): Raid {
         encounter.abilityPool,
         encounter.genderPool
     )
+}
+
+const getDenByIndex = (denIndex: number): Den | undefined => {
+    return dens[denIndex]
 }
 
 const getEntriesForBadgeLevel = (badgeLevel: state.BadgeLevel) => (
@@ -58,27 +78,9 @@ const getEntriesForBadgeLevel = (badgeLevel: state.BadgeLevel) => (
     }
 }
 
-export function getRaidMon(
-    raid: state.Raid,
-    settings: state.Settings
-): { species: number; form: number } | undefined {
-    const den = dens[raid.den]
-    if (!den) {
-        return
-    }
-    const entries = getEntriesForBadgeLevel(settings.badgeLevel)(
-        getEntriesForTitle(den, settings.gameTitle)
-    )
-    const entry = entries[raid.entryIndex]
-    if (!entry) {
-        return
-    }
-    return { species: entry.species, form: entry.altForm }
-}
-
 const getEntriesForTitle = (
-    den: Den,
-    title: state.GameTitle
+    title: state.GameTitle,
+    den: Den
 ): Array<DenEncounter> => {
     switch (title) {
         case state.GameTitle.Sword:
@@ -88,7 +90,56 @@ const getEntriesForTitle = (
     }
 }
 
+export const getEntriesForSettings = (settings: state.Settings) => (
+    denIndex: number
+): Array<DenEncounter> | undefined => {
+    const den = getDenByIndex(denIndex)
+    if (!den) {
+        return
+    }
+    return getEntriesForBadgeLevel(settings.badgeLevel)(
+        getEntriesForTitle(settings.gameTitle, den)
+    )
+}
+
+export function getRaidMon(
+    raid: state.Raid,
+    settings: state.Settings
+): { species: number; form: number } | undefined {
+    const entries = getEntriesForSettings(settings)(raid.den)
+    if (!entries) {
+        return
+    }
+    const entry = entries[raid.entryIndex]
+    if (!entry) {
+        return
+    }
+    return { species: entry.species, form: entry.altForm }
+}
+
+export const formatEntry = (entry: DenEncounter) => {
+    const speciesName = species.getSpeciesName(entry.species)
+    const form = entry.altForm > 0 ? entry.altForm : "" // TODO: Map these to names.
+    const gender = (() => {
+        switch (entry.genderPool) {
+            case GenderPool.LockedMale:
+                return "(M)"
+            case GenderPool.LockedFemale:
+                return "(F)"
+            default:
+                return ""
+        }
+    })()
+    return [speciesName, form, gender].join(" ").trim()
+}
+
+// prettier-ignore
 export const dens: Array<Den> = [
+    {
+        id: "-",
+        sw: [],
+        sh: [],
+    },
     {
         id: "17428356dc6109f6",
         sw: [
