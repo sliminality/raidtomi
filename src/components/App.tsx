@@ -56,7 +56,9 @@ export function App(): JSX.Element {
             raid: { ...state.raid, ...update },
         })
     }
-    const updateFilters = (update: Partial<Filters>) => {}
+    const updateFilters = (update: Partial<Filters>) => {
+        setState({ ...state, filters: { ...state.filters, ...update } })
+    }
 
     const currentEncounter = React.useMemo(
         () => den.getCurrentRaidEntry(state.raid, state.settings),
