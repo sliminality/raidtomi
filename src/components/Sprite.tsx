@@ -37,7 +37,7 @@ type SpritePropsBySlug =
 
 type SpriteProps = SpritePropsBySpecies | SpritePropsBySlug
 
-export function Sprite(props: SpriteProps) {
+export function Sprite(props: SpriteProps): JSX.Element {
     const slug =
         props.type === "species" ? speciesToSlug[props.species - 1] : props.slug
 

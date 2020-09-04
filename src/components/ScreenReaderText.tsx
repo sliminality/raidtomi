@@ -7,7 +7,9 @@ type ScreenReaderTextProps = {
     children: React.ReactNode
 }
 
-export function ScreenReaderText({ children }: ScreenReaderTextProps) {
+export function ScreenReaderText({
+    children,
+}: ScreenReaderTextProps): JSX.Element {
     return (
         <span
             style={{

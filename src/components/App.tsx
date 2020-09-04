@@ -1,31 +1,40 @@
 import * as React from "react"
 import crate from "../../crate/Cargo.toml"
-import {
-    createDefaultState,
-    createDefaultRaid,
-    createDefaultSettings,
-} from "../state"
-import * as state from "../state"
+
 import * as den from "../helpers/den"
 import * as filter from "../helpers/filter"
 import * as frame from "../helpers/frame"
-import { Settings } from "./Settings"
-import { Raid } from "./Raid"
-import { Filters } from "./Filters"
+import * as settings from "../helpers/settings"
+import { FilterForm } from "./FilterForm"
+import { RaidForm } from "./RaidForm"
 import { Seed } from "./Seed"
+import { SettingsForm } from "./SettingsForm"
 
-import type { State } from "../state"
+import type { Filters } from "../helpers/filter"
+import type { RaidData } from "../helpers/den"
+import type { Settings } from "../helpers/settings"
 
-type DispatchState = React.Dispatch<React.SetStateAction<State>>
+export type State = {
+    raid: RaidData
+    filters: Filters
+    settings: Settings
+}
 
-export function App() {
+export function createDefaultState(): State {
+    return {
+        raid: den.createDefaultRaid(),
+        filters: filter.createDefaultFilters(),
+        settings: settings.createDefaultSettings(),
+    }
+}
+
+export function App(): JSX.Element {
     // State.
     const [state, setState] = React.useState<State>(createDefaultState())
     const [seed, setSeed] = React.useState<BigInt | undefined>()
-    const dispatch = { setState, setSeed }
 
     // Handlers.
-    const updateSettings = (update: Partial<state.Settings>) => {
+    const updateSettings = (update: Partial<settings.Settings>) => {
         const current = state.settings
 
         // Changing the game title affects the tables for each den.
@@ -39,7 +48,7 @@ export function App() {
 
         setState({ ...state, settings: { ...state.settings, ...update } })
     }
-    const updateRaid = (update: Partial<state.Raid>) => {
+    const updateRaid = (update: Partial<RaidData>) => {
         // Changing the den affects the mon entries.
         // Changing the mon affects filter legality.
         setState({
@@ -47,7 +56,7 @@ export function App() {
             raid: { ...state.raid, ...update },
         })
     }
-    const updateFilters = (update: Partial<filter.Filters>) => {}
+    const updateFilters = (update: Partial<Filters>) => {}
 
     const currentEncounter = React.useMemo(
         () => den.getCurrentRaidEntry(state.raid, state.settings),
@@ -75,16 +84,16 @@ export function App() {
 
     return (
         <React.Fragment>
-            <Settings value={state.settings} updateValue={updateSettings} />
+            <SettingsForm value={state.settings} updateValue={updateSettings} />
             <details open={true}>
                 <summary>Raid</summary>
-                <Raid
+                <RaidForm
                     value={state.raid}
                     settings={state.settings}
                     updateValue={updateRaid}
                 />
             </details>
-            <Filters
+            <FilterForm
                 value={state.filters}
                 currentEncounter={currentEncounter}
                 updateValue={updateFilters}

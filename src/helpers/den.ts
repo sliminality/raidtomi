@@ -1,8 +1,20 @@
 import crate from "../../crate/Cargo.toml"
 import * as species from "./species"
-import * as state from "../state"
+import * as settings from "./settings"
 
 import type { Raid } from "../../crate/pkg/raidtomi"
+
+export type RaidData = {
+    den: number
+    entryIndex: number
+}
+
+export function createDefaultRaid(): RaidData {
+    return {
+        den: 1,
+        entryIndex: 0,
+    }
+}
 
 export type DenEncounter = {
     species: number // National Dex number.
@@ -50,7 +62,7 @@ const getDenByIndex = (denIndex: number): Den | undefined => {
     return dens[denIndex]
 }
 
-const getEntriesForBadgeLevel = (badgeLevel: state.BadgeLevel) => (
+const getEntriesForBadgeLevel = (badgeLevel: settings.BadgeLevel) => (
     entries: Array<DenEncounter>
 ): Array<DenEncounter> => {
     const filterEntry = (predicate: (index: number) => boolean) => (
@@ -64,33 +76,33 @@ const getEntriesForBadgeLevel = (badgeLevel: state.BadgeLevel) => (
             ).length > 0
 
     switch (badgeLevel) {
-        case state.BadgeLevel.All: {
+        case settings.BadgeLevel.All: {
             return entries
         }
         // 1-2 stars.
-        case state.BadgeLevel.Baby: {
+        case settings.BadgeLevel.Baby: {
             return entries.filter(filterEntry(starCount => starCount < 2))
         }
         // 3-5 stars.
-        case state.BadgeLevel.Adult: {
+        case settings.BadgeLevel.Adult: {
             return entries.filter(filterEntry(starCount => starCount >= 2))
         }
     }
 }
 
 const getEntriesForTitle = (
-    title: state.GameTitle,
+    title: settings.GameTitle,
     den: Den
 ): Array<DenEncounter> => {
     switch (title) {
-        case state.GameTitle.Sword:
+        case settings.GameTitle.Sword:
             return den.sw
-        case state.GameTitle.Shield:
+        case settings.GameTitle.Shield:
             return den.sh
     }
 }
 
-export const getEntriesForSettings = (settings: state.Settings) => (
+export const getEntriesForSettings = (settings: settings.Settings) => (
     denIndex: number
 ): Array<DenEncounter> | undefined => {
     const den = getDenByIndex(denIndex)
@@ -103,8 +115,8 @@ export const getEntriesForSettings = (settings: state.Settings) => (
 }
 
 export function getCurrentRaidEntry(
-    raid: state.Raid,
-    settings: state.Settings
+    raid: RaidData,
+    settings: settings.Settings
 ): DenEncounter | undefined {
     const entries = getEntriesForSettings(settings)(raid.den)
     if (!entries) {
@@ -113,7 +125,7 @@ export function getCurrentRaidEntry(
     return entries[raid.entryIndex]
 }
 
-export const formatEntry = (entry: DenEncounter) => {
+export const formatEntry = (entry: DenEncounter): string => {
     const speciesName = species.getSpeciesName(entry.species)
     const form = entry.altForm > 0 ? entry.altForm : "" // TODO: Map these to names.
     const gender = (() => {

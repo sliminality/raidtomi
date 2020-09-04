@@ -2,7 +2,6 @@
  * Logic for filtering frames based on stats.
  */
 import crate from "../../crate/Cargo.toml"
-import * as state from "../state"
 
 import type {
     FrameFilter,

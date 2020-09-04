@@ -2,11 +2,11 @@
  * Settings that stay fixed per-user.
  */
 import * as React from "react"
-import * as state from "../state"
+import * as settings from "../helpers/settings"
 
-import type { Settings } from "../state"
+import type { Settings } from "../helpers/settings"
 
-type SettingsProps = {
+type SettingsFormProps = {
     value: Settings
     updateValue: (update: Partial<Settings>) => void
 }
@@ -42,7 +42,7 @@ function GameTitle({ value, onChange }: GameTitleProps) {
     return (
         <fieldset style={styles.fieldset}>
             <legend>Game</legend>
-            {[state.GameTitle.Sword, state.GameTitle.Shield].map(
+            {[settings.GameTitle.Sword, settings.GameTitle.Shield].map(
                 renderRadioButton({
                     name: "settings-game-title",
                     value,
@@ -58,9 +58,9 @@ function BadgeLevel({ value, onChange }: BadgeLevelProps) {
         <fieldset style={styles.fieldset}>
             <legend>Show dens</legend>
             {[
-                state.BadgeLevel.All,
-                state.BadgeLevel.Adult,
-                state.BadgeLevel.Baby,
+                settings.BadgeLevel.All,
+                settings.BadgeLevel.Adult,
+                settings.BadgeLevel.Baby,
             ].map(
                 renderRadioButton({
                     name: "settings-badge-level",
@@ -72,7 +72,10 @@ function BadgeLevel({ value, onChange }: BadgeLevelProps) {
     )
 }
 
-export function Settings({ value, updateValue }: SettingsProps) {
+export function SettingsForm({
+    value,
+    updateValue,
+}: SettingsFormProps): JSX.Element {
     return (
         <div>
             <GameTitle

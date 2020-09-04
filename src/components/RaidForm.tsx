@@ -3,19 +3,19 @@
  */
 import * as React from "react"
 import * as den from "../helpers/den"
-import { GameTitle } from "../state"
 import { Sprite } from "./Sprite"
 
-import type { Raid, Settings } from "../state"
+import type { RaidData } from "../helpers/den"
+import type { Settings } from "../helpers/settings"
 
-type RaidProps = {
-    value: Raid
+type RaidFormProps = {
+    value: RaidData
     settings: Settings
-    updateValue: (update: Partial<Raid>) => void
+    updateValue: (update: Partial<RaidData>) => void
 }
 
 type DenPickerProps = {
-    value: Raid["den"]
+    value: RaidData["den"]
     onChange: (value: number) => void
 }
 
@@ -54,7 +54,7 @@ function DenPicker({ value, onChange }: DenPickerProps) {
         onChange(update)
         setInvalidState(undefined)
     }
-    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const handleBlur = () => {
         setInvalidState(undefined)
     }
 
@@ -74,7 +74,11 @@ function DenPicker({ value, onChange }: DenPickerProps) {
     )
 }
 
-export function DenPreview({ encounters, onChange, value }: DenPreviewProps) {
+export function DenPreview({
+    encounters,
+    onChange,
+    value,
+}: DenPreviewProps): JSX.Element {
     const [hoveredIndex, setHoveredIndex] = React.useState<number | undefined>()
 
     const resetHoveredIndex = () => {
@@ -114,7 +118,11 @@ export function DenPreview({ encounters, onChange, value }: DenPreviewProps) {
     )
 }
 
-export function Raid({ value, settings, updateValue }: RaidProps) {
+export function RaidForm({
+    value,
+    settings,
+    updateValue,
+}: RaidFormProps): JSX.Element {
     const handleDenChange = (update: number) => {
         updateValue({ den: update })
     }

@@ -8,7 +8,7 @@ type SeedProps = {
     updateValue: React.Dispatch<React.SetStateAction<BigInt | undefined>>
 }
 
-export function Seed({ value, updateValue }: SeedProps) {
+export function Seed({ value, updateValue }: SeedProps): JSX.Element {
     const valueAsHex = React.useMemo(() => (value ? value.toString(16) : ""), [
         value,
     ])
@@ -43,7 +43,7 @@ export function Seed({ value, updateValue }: SeedProps) {
         setInvalidState(undefined)
     }
 
-    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const handleBlur = () => {
         setInvalidState(undefined)
     }
 

@@ -6,12 +6,12 @@ import * as den from "../helpers/den"
 
 import type { Filters } from "../helpers/filter"
 
-type FiltersProps = {
+type FilterFormProps = {
     value: Filters
     currentEncounter: den.DenEncounter | undefined
     updateValue: (update: Partial<Filters>) => void
 }
 
-export function Filters(props: FiltersProps) {
+export function FilterForm(props: FilterFormProps): JSX.Element {
     return <div>filter</div>
 }
