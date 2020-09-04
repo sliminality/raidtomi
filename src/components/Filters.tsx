@@ -4,7 +4,7 @@
 import * as React from "react"
 import * as den from "../helpers/den"
 
-import type { Filters } from "../state"
+import type { Filters } from "../helpers/filter"
 
 type FiltersProps = {
     value: Filters

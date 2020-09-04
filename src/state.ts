@@ -2,8 +2,8 @@
  * State for the application.
  */
 import crate from "../crate/Cargo.toml"
+import * as filter from "./helpers/filter"
 
-import type { DenEncounter } from "./helpers/den"
 import type {
     SingleIVFilter,
     IVJudgment,
@@ -11,6 +11,8 @@ import type {
     GenderFilter,
     ShinyFilter,
 } from "../crate/pkg/raidtomi"
+import type { Filters } from "./helpers/filter"
+import type { DenEncounter } from "./helpers/den"
 
 export type State = {
     raid: Raid
@@ -21,7 +23,7 @@ export type State = {
 export function createDefaultState(): State {
     return {
         raid: createDefaultRaid(),
-        filters: createDefaultFilters(),
+        filters: filter.createDefaultFilters(),
         settings: createDefaultSettings(),
     }
 }
@@ -67,32 +69,5 @@ export function createDefaultRaid(): State["raid"] {
     return {
         den: 1,
         entryIndex: 0,
-    }
-}
-
-/**********************************************************
- * Filters.
- **********************************************************/
-
-export type Filters = {
-    shiny: ShinyFilter | undefined
-    iv: [
-        SingleIVFilter | undefined,
-        SingleIVFilter | undefined,
-        SingleIVFilter | undefined,
-        SingleIVFilter | undefined,
-        SingleIVFilter | undefined,
-        SingleIVFilter | undefined
-    ]
-    ability: AbilityFilter | undefined
-    gender: GenderFilter | undefined
-}
-
-export function createDefaultFilters(): Filters {
-    return {
-        shiny: crate.ShinyFilter.Shiny,
-        iv: [undefined, undefined, undefined, undefined, undefined, undefined],
-        ability: undefined,
-        gender: undefined,
     }
 }

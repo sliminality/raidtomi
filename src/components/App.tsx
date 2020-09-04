@@ -4,11 +4,11 @@ import {
     createDefaultState,
     createDefaultRaid,
     createDefaultSettings,
-    createDefaultFilters,
 } from "../state"
 import * as state from "../state"
 import * as den from "../helpers/den"
 import * as filter from "../helpers/filter"
+import * as frame from "../helpers/frame"
 import { Settings } from "./Settings"
 import { Raid } from "./Raid"
 import { Filters } from "./Filters"
@@ -47,7 +47,7 @@ export function App() {
             raid: { ...state.raid, ...update },
         })
     }
-    const updateFilters = (update: Partial<state.Filters>) => {}
+    const updateFilters = (update: Partial<filter.Filters>) => {}
 
     const currentEncounter = React.useMemo(
         () => den.getCurrentRaidEntry(state.raid, state.settings),
@@ -67,7 +67,10 @@ export function App() {
             seed,
             filter.createFilter(state.filters)
         )
-        console.log(result.shiny)
+        if (!result) {
+            return
+        }
+        console.log(result[0], frame.formatSeed(result[1].get_seed()))
     }
 
     return (
