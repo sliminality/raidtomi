@@ -102,19 +102,15 @@ export const getEntriesForSettings = (settings: state.Settings) => (
     )
 }
 
-export function getRaidMon(
+export function getCurrentRaidEntry(
     raid: state.Raid,
     settings: state.Settings
-): { species: number; form: number } | undefined {
+): DenEncounter | undefined {
     const entries = getEntriesForSettings(settings)(raid.den)
     if (!entries) {
         return
     }
-    const entry = entries[raid.entryIndex]
-    if (!entry) {
-        return
-    }
-    return { species: entry.species, form: entry.altForm }
+    return entries[raid.entryIndex]
 }
 
 export const formatEntry = (entry: DenEncounter) => {

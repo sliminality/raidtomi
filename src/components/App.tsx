@@ -1,4 +1,5 @@
 import * as React from "react"
+import crate from "../../crate/Cargo.toml"
 import {
     createDefaultState,
     createDefaultRaid,
@@ -7,6 +8,7 @@ import {
 } from "../state"
 import * as state from "../state"
 import * as den from "../helpers/den"
+import * as filter from "../helpers/filter"
 import { Settings } from "./Settings"
 import { Raid } from "./Raid"
 import { Filters } from "./Filters"
@@ -47,7 +49,26 @@ export function App() {
     }
     const updateFilters = (update: Partial<state.Filters>) => {}
 
-    const mon = den.getRaidMon(state.raid, state.settings)
+    const currentEncounter = React.useMemo(
+        () => den.getCurrentRaidEntry(state.raid, state.settings),
+        [state.raid, state.settings]
+    )
+
+    const handleSearch = () => {
+        if (!currentEncounter) {
+            return
+        }
+        if (!seed) {
+            return
+        }
+        const raid = den.createRaid(currentEncounter)
+        const result = crate.search(
+            raid,
+            seed,
+            filter.createFilter(state.filters)
+        )
+        console.log(result.shiny)
+    }
 
     return (
         <React.Fragment>
@@ -62,11 +83,13 @@ export function App() {
             </details>
             <Filters
                 value={state.filters}
-                mon={mon}
+                currentEncounter={currentEncounter}
                 updateValue={updateFilters}
             />
             <Seed value={seed} updateValue={setSeed} />
-            <button type="submit">Search</button>
+            <button type="submit" onClick={handleSearch}>
+                Search
+            </button>
         </React.Fragment>
     )
 }

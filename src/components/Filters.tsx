@@ -2,12 +2,13 @@
  * Filters for frames.
  */
 import * as React from "react"
+import * as den from "../helpers/den"
 
 import type { Filters } from "../state"
 
 type FiltersProps = {
     value: Filters
-    mon: { species: number; form: number } | undefined
+    currentEncounter: den.DenEncounter | undefined
     updateValue: (update: Partial<Filters>) => void
 }
 
