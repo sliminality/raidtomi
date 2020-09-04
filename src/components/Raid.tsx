@@ -4,6 +4,7 @@
 import * as React from "react"
 import * as den from "../helpers/den"
 import { GameTitle } from "../state"
+import { Sprite } from "./Sprite"
 
 import type { Raid, Settings } from "../state"
 
@@ -15,6 +16,12 @@ type RaidProps = {
 
 type DenPickerProps = {
     value: Raid["den"]
+    onChange: (value: number) => void
+}
+
+type DenPreviewProps = {
+    value: number
+    encounters: Array<den.DenEncounter>
     onChange: (value: number) => void
 }
 
@@ -67,6 +74,46 @@ function DenPicker({ value, onChange }: DenPickerProps) {
     )
 }
 
+export function DenPreview({ encounters, onChange, value }: DenPreviewProps) {
+    const [hoveredIndex, setHoveredIndex] = React.useState<number | undefined>()
+
+    const resetHoveredIndex = () => {
+        setHoveredIndex(undefined)
+    }
+
+    // TODO: Handle female sprites.
+    // TODO: Handle form sprites.
+    return (
+        <ul style={styles.denPreviewList}>
+            {encounters.map((entry, i) => {
+                const style = {
+                    ...styles.denPreviewListEntry,
+                    ...(i === hoveredIndex && styles.denPreviewListEntryHover),
+                    ...(i === value && styles.denPreviewListEntryActive),
+                }
+                return (
+                    <li key={i}>
+                        <button
+                            style={style}
+                            onClick={() => onChange(i)}
+                            onMouseEnter={() => setHoveredIndex(i)}
+                            onMouseLeave={resetHoveredIndex}
+                        >
+                            <Sprite
+                                type="species"
+                                species={entry.species}
+                                isStandalone={false}
+                                style={styles.denPreviewSprite}
+                            />
+                            {den.formatEntry(entry)}
+                        </button>
+                    </li>
+                )
+            })}
+        </ul>
+    )
+}
+
 export function Raid({ value, settings, updateValue }: RaidProps) {
     const handleDenChange = (update: number) => {
         updateValue({ den: update })
@@ -77,30 +124,86 @@ export function Raid({ value, settings, updateValue }: RaidProps) {
         [value.den, settings]
     )
 
-    const handleEncounterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleEncounterSelectChange = (
+        e: React.ChangeEvent<HTMLSelectElement>
+    ) => {
         updateValue({ entryIndex: parseInt(e.currentTarget.value, 10) })
+    }
+    const handleDenPreviewChange = (index: number) => {
+        updateValue({ entryIndex: index })
     }
 
     return (
-        <div>
-            raid
-            <DenPicker value={value.den} onChange={handleDenChange} />
-            <label style={styles.label}>
-                Encounter
-                <select name="encounter" onChange={handleEncounterChange}>
-                    {encounters.map((entry, i) => (
-                        <option key={i} value={i}>
-                            {den.formatEntry(entry)}
-                        </option>
-                    ))}
-                </select>
-            </label>
+        <div style={styles.wrapper}>
+            <div style={styles.form}>
+                <DenPicker value={value.den} onChange={handleDenChange} />
+                <label style={styles.label}>
+                    Encounter
+                    <select
+                        name="encounter"
+                        value={value.entryIndex}
+                        onChange={handleEncounterSelectChange}
+                    >
+                        {encounters.map((entry, i) => (
+                            <option key={i} value={i}>
+                                {den.formatEntry(entry)}
+                            </option>
+                        ))}
+                    </select>
+                </label>
+            </div>
+            <DenPreview
+                value={value.entryIndex}
+                encounters={encounters}
+                onChange={handleDenPreviewChange}
+            />
         </div>
     )
 }
 
 const styles = {
+    wrapper: {
+        display: "flex",
+        justifyContent: "space-between",
+    },
     label: {
         display: "flex",
+    },
+    form: {
+        marginRight: 8,
+        width: "40%",
+        maxWidth: 400,
+    },
+    denPreviewList: {
+        listStyleType: "none",
+        margin: 0,
+        padding: 0,
+        display: "flex",
+        flexWrap: "wrap" as const,
+        width: "60%",
+        justifyContent: "center",
+    },
+    denPreviewListEntry: {
+        display: "flex",
+        flexDirection: "column" as const,
+        alignItems: "center",
+        justifyContent: "center",
+        background: "none",
+        border: "none",
+        borderRadius: 4,
+        fontSize: 14,
+        padding: 6,
+        width: 92,
+        marginBottom: 8,
+        marginRight: 8,
+    },
+    denPreviewListEntryActive: {
+        background: "rgba(0, 0, 150, 0.1)",
+    },
+    denPreviewListEntryHover: {
+        background: "rgba(0, 0, 0, 0.1)",
+    },
+    denPreviewSprite: {
+        marginBottom: 8,
     },
 }
