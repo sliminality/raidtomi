@@ -7,7 +7,7 @@ import type { Settings } from "../state"
 
 type SettingsProps = {
     value: Settings
-    updateValue: React.Dispatch<React.SetStateAction<Settings>>
+    updateValue: (update: Partial<Settings>) => void
 }
 
 export function Settings(props: SettingsProps) {

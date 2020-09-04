@@ -1,4 +1,5 @@
 import crate from "../../crate/Cargo.toml"
+import * as state from "../state"
 
 import type { Raid } from "../../crate/pkg/raidtomi"
 
@@ -27,6 +28,64 @@ export function createRaid(encounter: DenEncounter): Raid {
         encounter.abilityPool,
         encounter.genderPool
     )
+}
+
+const getEntriesForBadgeLevel = (badgeLevel: state.BadgeLevel) => (
+    entries: Array<DenEncounter>
+): Array<DenEncounter> => {
+    const filterEntry = (predicate: (index: number) => boolean) => (
+        entry: DenEncounter
+    ): boolean =>
+        entry.stars
+            .map((isPresent, starCount) => (isPresent ? starCount : undefined))
+            .filter(
+                starCount =>
+                    typeof starCount === "number" && predicate(starCount)
+            ).length > 0
+
+    switch (badgeLevel) {
+        case state.BadgeLevel.All: {
+            return entries
+        }
+        // 1-2 stars.
+        case state.BadgeLevel.Baby: {
+            return entries.filter(filterEntry(starCount => starCount < 2))
+        }
+        // 3-5 stars.
+        case state.BadgeLevel.Adult: {
+            return entries.filter(filterEntry(starCount => starCount >= 2))
+        }
+    }
+}
+
+export function getRaidMon(
+    raid: state.Raid,
+    settings: state.Settings
+): { species: number; form: number } | undefined {
+    const den = dens[raid.den]
+    if (!den) {
+        return
+    }
+    const entries = getEntriesForBadgeLevel(settings.badgeLevel)(
+        getEntriesForTitle(den, settings.gameTitle)
+    )
+    const entry = entries[raid.entryIndex]
+    if (!entry) {
+        return
+    }
+    return { species: entry.species, form: entry.altForm }
+}
+
+const getEntriesForTitle = (
+    den: Den,
+    title: state.GameTitle
+): Array<DenEncounter> => {
+    switch (title) {
+        case state.GameTitle.Sword:
+            return den.sw
+        case state.GameTitle.Shield:
+            return den.sh
+    }
 }
 
 export const dens: Array<Den> = [

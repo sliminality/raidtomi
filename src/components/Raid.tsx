@@ -8,7 +8,7 @@ import type { Raid, Settings } from "../state"
 type RaidProps = {
     value: Raid
     settings: Settings
-    updateValue: React.Dispatch<React.SetStateAction<Raid>>
+    updateValue: (update: Partial<Raid>) => void
 }
 
 export function Raid(props: RaidProps) {

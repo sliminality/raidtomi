@@ -8,7 +8,7 @@ import type { Filters } from "../state"
 type FiltersProps = {
     value: Filters
     mon: { species: number; form: number } | undefined
-    updateValue: React.Dispatch<React.SetStateAction<Filters>>
+    updateValue: (update: Partial<Filters>) => void
 }
 
 export function Filters(props: FiltersProps) {

@@ -13,7 +13,6 @@ import type {
 } from "../crate/pkg/raidtomi"
 
 export type State = {
-    seed: BigInt | undefined
     raid: Raid
     filters: Filters
     settings: Settings
@@ -21,7 +20,6 @@ export type State = {
 
 export function createDefaultState(): State {
     return {
-        seed: undefined,
         raid: createDefaultRaid(),
         filters: createDefaultFilters(),
         settings: createDefaultSettings(),
@@ -33,8 +31,8 @@ export function createDefaultState(): State {
  **********************************************************/
 
 export const enum GameTitle {
-    Sword = "sw",
-    Shield = "sh",
+    Sword = "Sword",
+    Shield = "Shield",
 }
 
 // Which star levels will be visible.
