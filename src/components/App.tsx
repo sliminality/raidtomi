@@ -52,11 +52,14 @@ export function App() {
     return (
         <React.Fragment>
             <Settings value={state.settings} updateValue={updateSettings} />
-            <Raid
-                value={state.raid}
-                settings={state.settings}
-                updateValue={updateRaid}
-            />
+            <details open={true}>
+                <summary>Raid</summary>
+                <Raid
+                    value={state.raid}
+                    settings={state.settings}
+                    updateValue={updateRaid}
+                />
+            </details>
             <Filters
                 value={state.filters}
                 mon={mon}
