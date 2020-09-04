@@ -47,13 +47,22 @@ pub fn list_frames(raid: Raid, seed: u64, num_frames: usize) -> js_sys::Array {
     js_sys::Array::from_iter(frames)
 }
 
+#[wasm_bindgen]
+pub struct SearchResult(pub u32, pub Frame);
+
 /// Search for a frame matching the given filter.
 #[wasm_bindgen]
-pub fn search(raid: Raid, seed: u64, filter: FrameFilter) -> Frame {
+pub fn search(raid: Raid, seed: u64, filter: FrameFilter) -> Option<SearchResult> {
     let mut f = FrameGenerator::new(raid, seed);
     f.set_filter(filter);
-    f.find(FrameResult::is_pass)
-        .map(FrameResult::to_option)
-        .flatten()
-        .unwrap()
+
+    if let Some((skips, Some(result))) = f
+        .enumerate()
+        .find(|(_, result)| result.is_pass())
+        .map(|(skips, result)| (skips, result.to_option()))
+    {
+        Some(SearchResult(skips as u32, result))
+    } else {
+        None
+    }
 }
