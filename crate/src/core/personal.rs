@@ -22,6 +22,10 @@ pub struct Mon {
     included: bool,
 }
 
+#[wasm_bindgen]
+#[derive(PartialEq, Eq, Debug, Copy, Clone)]
+pub struct Abilities(pub u16, pub u16, pub u16);
+
 // 176 bytes per mon.
 const ENTRY_SIZE: usize = 0xB0;
 
@@ -79,6 +83,11 @@ impl Mon {
 
 #[wasm_bindgen]
 impl Mon {
+    /// Returns abilities.
+    pub fn get_abilities(&self) -> Abilities {
+        Abilities(self.ability_1, self.ability_2, self.ability_hidden)
+    }
+
     /// Returns the gender ratio.
     pub fn get_gender_ratio(&self) -> u8 {
         self.gender_ratio
@@ -89,7 +98,7 @@ impl Mon {
         self.form_stat_index as usize
     }
 
-    /// Returns the total number of forms, including the base form.
+    /// Returns a list of genders.
     pub fn get_form_count(&self) -> u8 {
         self.form_count
     }

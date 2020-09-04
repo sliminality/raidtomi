@@ -1,8 +1,32 @@
+import crate from "../../crate/Cargo.toml"
+
+import type { DenEncounter } from "./den"
+
 /**
  * Returns the name of an ability.
  */
 export function getAbilityName(id: number): AbilityName | undefined {
     return abilities[id]
+}
+
+export function getAbilitiesForEntry(
+    entry: DenEncounter | undefined
+): [AbilityName, AbilityName, AbilityName] | undefined {
+    if (!entry) {
+        return
+    }
+    const personalInfo = crate.get_personal_info(entry.species, entry.altForm)
+    if (!personalInfo) {
+        return
+    }
+    const abilities = personalInfo.get_abilities()
+    const abilityIds = [abilities[0], abilities[1], abilities[2]]
+    const result = abilityIds.map(getAbilityName)
+
+    // Ridiculous bit of code for type inference.
+    if (result[0] && result[1] && result[2]) {
+        return [result[0], result[1], result[2]]
+    }
 }
 
 export type AbilityName = Values<typeof abilities> & string

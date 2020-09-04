@@ -4,9 +4,11 @@
 import * as React from "react"
 import crate from "../../crate/Cargo.toml"
 import * as den from "../helpers/den"
+import * as ability from "../helpers/ability"
 
 import type { AbilityFilter, ShinyFilter } from "../../crate/pkg/raidtomi"
 import type { Filters } from "../helpers/filter"
+import type { AbilityName } from "../helpers/ability"
 
 type FilterFormProps = {
     value: Filters
@@ -21,6 +23,7 @@ type ShinyFilterProps = {
 
 type AbilityFilterProps = {
     value: Filters["ability"]
+    abilityNames: [AbilityName, AbilityName, AbilityName] | undefined
     onChange: (value: Filters["ability"]) => void
 }
 
@@ -75,9 +78,10 @@ function ShinyFilterForm({ value, onChange }: ShinyFilterProps): JSX.Element {
 
 function AbilityFilterForm({
     value,
+    abilityNames,
     onChange,
 }: AbilityFilterProps): JSX.Element {
-    const abilityFilterToString = (filter: AbilityFilter | undefined) => {
+    const getDOMValue = (filter: AbilityFilter | undefined) => {
         switch (filter) {
             case crate.AbilityFilter.First:
                 return "First"
@@ -85,6 +89,19 @@ function AbilityFilterForm({
                 return "Second"
             case crate.AbilityFilter.Hidden:
                 return "Hidden"
+            default:
+                return "Any"
+        }
+    }
+
+    const getDisplayValue = (filter: AbilityFilter | undefined) => {
+        switch (filter) {
+            case crate.AbilityFilter.First:
+                return abilityNames ? `${abilityNames[0]} (1)` : "First"
+            case crate.AbilityFilter.Second:
+                return abilityNames ? `${abilityNames[1]} (2)` : "Second"
+            case crate.AbilityFilter.Hidden:
+                return abilityNames ? `${abilityNames[2]} (HA)` : "Hidden"
             default:
                 return "Any"
         }
@@ -103,8 +120,8 @@ function AbilityFilterForm({
                     name: "filter-ability",
                     value,
                     onChange,
-                    getDOMValue: abilityFilterToString,
-                    getDisplayValue: abilityFilterToString,
+                    getDOMValue,
+                    getDisplayValue,
                 })
             )}
         </fieldset>
@@ -116,6 +133,11 @@ export function FilterForm({
     currentEncounter,
     updateValue,
 }: FilterFormProps): JSX.Element {
+    const abilityNames = React.useMemo(
+        () => ability.getAbilitiesForEntry(currentEncounter),
+        [currentEncounter]
+    )
+
     return (
         <div>
             <ShinyFilterForm
@@ -124,6 +146,7 @@ export function FilterForm({
             />
             <AbilityFilterForm
                 value={value.ability}
+                abilityNames={abilityNames}
                 onChange={ability => updateValue({ ability })}
             />
         </div>
