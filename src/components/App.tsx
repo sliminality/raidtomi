@@ -69,6 +69,10 @@ export function App(): JSX.Element {
         () => den.getCurrentRaidEntry(state.raid, state.settings),
         [state.raid, state.settings]
     )
+    const genderPool = React.useMemo(
+        () => den.getGenderPoolForEncounter(currentEncounter),
+        [currentEncounter]
+    )
 
     const handleSearch = () => {
         if (!currentEncounter) {
@@ -102,8 +106,9 @@ export function App(): JSX.Element {
             </details>
             <FilterForm
                 value={state.filters}
-                currentEncounter={currentEncounter}
                 updateValue={updateFilters}
+                currentEncounter={currentEncounter}
+                currentGenderPool={genderPool}
             />
             <Seed value={seed} updateValue={setSeed} />
             <button type="submit" onClick={handleSearch}>

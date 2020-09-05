@@ -5,6 +5,10 @@ import { dens } from "./data/dens"
 
 import type { Raid } from "../../crate/pkg/raidtomi"
 
+//=============================================================================
+// Types.
+//=============================================================================
+
 export type RaidData = {
     den: number
     entryIndex: number
@@ -48,6 +52,10 @@ export const enum GenderPool {
     LockedGenderless = 3,
 }
 
+//=============================================================================
+// Constructors.
+//=============================================================================
+
 export function createRaid(encounter: DenEncounter): Raid {
     return new crate.Raid(
         encounter.species,
@@ -59,10 +67,17 @@ export function createRaid(encounter: DenEncounter): Raid {
     )
 }
 
+//=============================================================================
+// Encounters.
+//=============================================================================
+
 const getDenByIndex = (denIndex: number): Den | undefined => {
     return dens[denIndex]
 }
 
+/**
+ * Filters all the entries corresponding to a specific badge level.
+ */
 const getEntriesForBadgeLevel = (badgeLevel: settings.BadgeLevel) => (
     entries: Array<DenEncounter>
 ): Array<DenEncounter> => {
@@ -126,6 +141,9 @@ export function getCurrentRaidEntry(
     return entries[raid.entryIndex]
 }
 
+/**
+ * Formats an entry for display.
+ */
 export const formatEntry = (entry: DenEncounter): string => {
     const speciesName = species.getSpeciesName(entry.species)
     const form = entry.altForm > 0 ? entry.altForm : "" // TODO: Map these to names.
@@ -140,4 +158,58 @@ export const formatEntry = (entry: DenEncounter): string => {
         }
     })()
     return [speciesName, form, gender].join(" ").trim()
+}
+
+//=============================================================================
+// Gender.
+//=============================================================================
+
+/**
+ * Returns the GenderPool corresponding to the given gender ratio.
+ */
+const getGenderPoolForRatio = (ratio: number): GenderPool => {
+    switch (ratio) {
+        case 0:
+            return GenderPool.LockedMale
+        case 254:
+            return GenderPool.LockedFemale
+        case 255:
+            return GenderPool.LockedGenderless
+        default: {
+            if (ratio >= 0 && ratio < 256) {
+                return GenderPool.Random
+            }
+        }
+    }
+    throw new Error(`Invalid gender ratio: ${ratio}`)
+}
+
+/**
+ * Returns the final gender pool for the raid.
+ *
+ * There are two ways a raid encounter's gender can be determined: through the den
+ * settings (DenEncounter.GenderPool), or the mon's gender ratio. First we check
+ * the den settings, and if that is a random roll, we check the gender ratio.
+ */
+export const getGenderPoolForEncounter = (
+    encounter: DenEncounter | undefined
+): GenderPool | undefined => {
+    if (!encounter) {
+        return
+    }
+
+    // If encounter is not gender-locked, check if the mon itself is locked.
+    if (encounter.genderPool === GenderPool.Random) {
+        const { species, altForm } = encounter
+        const personal = crate.get_personal_info(species, altForm)
+        if (!personal) {
+            throw new Error(
+                `Invalid personal id: species ${species}, alt form ${altForm}`
+            )
+        }
+        return getGenderPoolForRatio(personal.get_gender_ratio())
+    }
+
+    // For gender-locked encounters, no need to look up personal info.
+    return encounter.genderPool
 }
