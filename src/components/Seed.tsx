@@ -59,6 +59,8 @@ export function Seed({ value, updateValue }: SeedProps): JSX.Element {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     placeholder="bb810e6006a2a035"
+                    pattern="[0-9a-fA-F]{16}"
+                    size={16}
                 />
                 {invalidState && invalidState.message}
             </label>
