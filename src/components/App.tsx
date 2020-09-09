@@ -96,14 +96,11 @@ export function App(): JSX.Element {
     return (
         <React.Fragment>
             <SettingsForm value={state.settings} updateValue={updateSettings} />
-            <details open={false}>
-                <summary>Raid</summary>
-                <RaidForm
-                    value={state.raid}
-                    settings={state.settings}
-                    updateValue={updateRaid}
-                />
-            </details>
+            <RaidForm
+                value={state.raid}
+                settings={state.settings}
+                updateValue={updateRaid}
+            />
             <FilterForm
                 value={state.filters}
                 updateValue={updateFilters}
