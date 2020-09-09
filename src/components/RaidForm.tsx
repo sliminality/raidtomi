@@ -68,6 +68,7 @@ function DenPicker({ value, onChange }: DenPickerProps) {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={invalidState ? invalidState.temporaryValue : value}
+                size={3}
             />
             {invalidState && invalidState.message}
         </label>
@@ -173,14 +174,13 @@ const styles = {
     wrapper: {
         display: "flex",
         justifyContent: "space-between",
+        flexDirection: "column" as const,
     },
     label: {
-        display: "flex",
+        display: "inline-flex",
     },
     form: {
         marginRight: 8,
-        width: "40%",
-        maxWidth: 400,
     },
     denPreviewList: {
         listStyleType: "none",
@@ -188,7 +188,6 @@ const styles = {
         padding: 0,
         display: "flex",
         flexWrap: "wrap" as const,
-        width: "60%",
         justifyContent: "center",
     },
     denPreviewListEntry: {
