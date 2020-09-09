@@ -209,34 +209,32 @@ function GenderFilterForm({
     }
 
     return (
-        <fieldset>
-            <legend>Gender</legend>
-            <Switcher<GenderPool>
-                allowDeselect={true}
-                value={switcherValue}
-                items={[
-                    {
-                        item: den.GenderPool.Random,
-                        disabled: isGenderLocked,
-                    },
-                    {
-                        item: den.GenderPool.LockedMale,
-                        disabled: isGenderLocked,
-                    },
-                    {
-                        item: den.GenderPool.LockedFemale,
-                        disabled: isGenderLocked,
-                    },
-                    {
-                        item: den.GenderPool.LockedGenderless,
-                        disabled: true,
-                    },
-                ]}
-                onChange={handleChange}
-                renderItemTitle={renderItemTitle}
-                getItemAriaLabel={getAriaItemLabel}
-            />
-        </fieldset>
+        <Switcher<GenderPool>
+            groupName="filter-gender"
+            allowDeselect={true}
+            value={switcherValue}
+            items={[
+                {
+                    item: den.GenderPool.Random,
+                    disabled: isGenderLocked,
+                },
+                {
+                    item: den.GenderPool.LockedMale,
+                    disabled: isGenderLocked,
+                },
+                {
+                    item: den.GenderPool.LockedFemale,
+                    disabled: isGenderLocked,
+                },
+                {
+                    item: den.GenderPool.LockedGenderless,
+                    disabled: true,
+                },
+            ]}
+            onChange={handleChange}
+            renderItemTitle={renderItemTitle}
+            getItemAriaLabel={getAriaItemLabel}
+        />
     )
 }
 
