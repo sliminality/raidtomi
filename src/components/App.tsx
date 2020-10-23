@@ -6,7 +6,9 @@ import * as den from "../helpers/den"
 import * as filter from "../helpers/filter"
 import * as frame from "../helpers/frame"
 import * as settings from "../helpers/settings"
+import { Button } from "./Button"
 import { FilterForm } from "./FilterForm"
+import { Footer } from "./Footer"
 import { Results } from "./Results"
 import { RaidForm } from "./RaidForm"
 import { Seed } from "./Seed"
@@ -97,7 +99,7 @@ export function App(): JSX.Element {
     }
 
     return (
-        <React.Fragment>
+        <div className={css(styles.appWrapper)}>
             <SettingsForm value={state.settings} updateValue={updateSettings} />
             <RaidForm
                 value={state.raid}
@@ -112,19 +114,24 @@ export function App(): JSX.Element {
             />
             <div className={css(styles.seedSubmit)}>
                 <Seed value={seed} updateValue={setSeed} />
-                <button type="submit" onClick={handleSearch}>
+                <Button type="submit" onClick={handleSearch}>
                     Search
-                </button>
+                </Button>
             </div>
             <Results result={result} currentEncounter={currentEncounter} />
-        </React.Fragment>
+            <Footer />
+        </div>
     )
 }
 
 const styles = StyleSheet.create({
+    appWrapper: {
+        padding: 12,
+    },
     seedSubmit: {
         marginTop: 12,
         marginBottom: 12,
         display: "flex",
+        alignItems: "center",
     },
 })

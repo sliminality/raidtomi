@@ -2,6 +2,7 @@
  * Settings that stay fixed per-user.
  */
 import * as React from "react"
+import { StyleSheet, css } from "aphrodite/no-important"
 import * as settings from "../helpers/settings"
 
 import type { Settings } from "../helpers/settings"
@@ -26,7 +27,7 @@ const renderRadioButton = <T extends string>(args: {
     value: T
     onChange: (t: T) => void
 }) => (variant: T, i: number) => (
-    <label key={i}>
+    <label key={i} className={css(styles.radioLabel)}>
         <input
             type="radio"
             name={args.name}
@@ -40,7 +41,7 @@ const renderRadioButton = <T extends string>(args: {
 
 function GameTitle({ value, onChange }: GameTitleProps) {
     return (
-        <fieldset style={styles.fieldset}>
+        <fieldset className={css(styles.fieldset)}>
             <legend>Game</legend>
             {[settings.GameTitle.Sword, settings.GameTitle.Shield].map(
                 renderRadioButton({
@@ -77,7 +78,7 @@ export function SettingsForm({
     updateValue,
 }: SettingsFormProps): JSX.Element {
     return (
-        <div>
+        <div className={css(styles.settings)}>
             <GameTitle
                 value={value.gameTitle}
                 onChange={gameTitle => updateValue({ gameTitle })}
@@ -90,8 +91,16 @@ export function SettingsForm({
     )
 }
 
-const styles = {
+const styles = StyleSheet.create({
+    settings: {
+        display: "flex",
+        marginBottom: 12,
+    },
     fieldset: {
         display: "inline-flex",
     },
-}
+    radioLabel: {
+        lineHeight: 1.4,
+        marginRight: 12,
+    },
+})

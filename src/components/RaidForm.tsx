@@ -174,18 +174,22 @@ export function RaidForm({
 const styles = {
     wrapper: {
         display: "flex",
-        justifyContent: "space-between",
+        alignItems: "flex-start",
         flexDirection: "column" as const,
     },
     label: {
         display: "inline-flex",
+        alignItems: "center",
     },
     form: {
         marginRight: 8,
+        marginBottom: 12,
+        display: "flex",
+        alignItems: "center",
     },
     denPreviewList: {
         listStyleType: "none",
-        margin: 0,
+        margin: "12px 0",
         padding: 0,
         display: "flex",
         flexWrap: "wrap" as const,
@@ -206,10 +210,10 @@ const styles = {
         marginRight: 8,
     },
     denPreviewListEntryActive: {
-        background: "rgba(0, 0, 150, 0.1)",
+        background: "var(--light-blue)",
     },
     denPreviewListEntryHover: {
-        background: "rgba(0, 0, 0, 0.1)",
+        background: "rgba(var(--blue-base), 0.1)",
     },
     denPreviewSprite: {
         marginBottom: 8,

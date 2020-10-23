@@ -13,6 +13,8 @@
     --light-blue: rgba(var(--blue-base), 0.3);
     --blue: rgba(var(--blue-base), 1.0);
 
+    --dark-blue-base: 45, 130, 175;
+
     --light-divider-color: rgba(var(--dark-base), 0.1);
     --medium-divider-color: rgba(var(--dark-base), 0.3);
 
@@ -23,6 +25,8 @@
     --focus-ring-error:
         0 0 0 1px var(--red) inset,
         0 0 0 3px var(--light-red);
+    --button-outline: 
+        0 0 0 1px rgba(var(--dark-blue-base), 1.0);
 }
 
 input {
@@ -40,6 +44,27 @@ input {
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
     color: var(--dark-text-color);
+}
+
+a {
+    text-decoration: none;
+    color: var(--blue);
+}
+
+fieldset {
+    border: none;
+    padding: 0;
+    margin-right: 12px;
+}
+
+fieldset legend {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+    margin-right: 6px;
 }
 
 @supports (appearance: none) or (-webkit-appearance: none) or (-moz-appearance: none) {

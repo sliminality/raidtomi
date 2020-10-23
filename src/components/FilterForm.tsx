@@ -2,6 +2,7 @@
  * Filters for frames.
  */
 import * as React from "react"
+import { StyleSheet, css } from "aphrodite/no-important"
 import crate from "../../crate/Cargo.toml"
 import * as den from "../helpers/den"
 import * as ability from "../helpers/ability"
@@ -48,7 +49,7 @@ const renderRadioButton = <T extends unknown>(args: {
     getDisplayValue: (t: T) => string
 }) => (variant: T, i: number) => {
     return (
-        <label key={i}>
+        <label className={css(styles.radioLabel)} key={i}>
             <input
                 type="radio"
                 name={args.name}
@@ -250,7 +251,7 @@ export function FilterForm({
     )
 
     return (
-        <div>
+        <div className={css(styles.filterWrapper)}>
             <ShinyFilterForm
                 value={value.shiny}
                 onChange={shiny => updateValue({ shiny })}
@@ -268,3 +269,13 @@ export function FilterForm({
         </div>
     )
 }
+
+const styles = StyleSheet.create({
+    filterWrapper: {
+        display: "flex",
+    },
+    radioLabel: {
+        display: "flex",
+        lineHeight: 1.4,
+    },
+})
