@@ -3,6 +3,7 @@
  */
 import * as React from "react"
 import * as den from "../helpers/den"
+import { dens } from "../helpers/data/dens"
 import { Sprite } from "./Sprite"
 
 import type { RaidData } from "../helpers/den"
@@ -26,7 +27,7 @@ type DenPreviewProps = {
 }
 
 function DenPicker({ value, onChange }: DenPickerProps) {
-    const MAX_DEN_INDEX = 157
+    const MAX_DEN_INDEX = dens.length
     const [invalidState, setInvalidState] = React.useState<
         | {
               temporaryValue: string

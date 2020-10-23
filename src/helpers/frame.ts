@@ -1,4 +1,4 @@
-import type { Seed } from "../../crate/pkg/raidtomi"
+import type { Frame, Seed } from "../../crate/pkg/raidtomi"
 
 /**
  * Reassemble a Seed object into a 64-bit BigInt.
