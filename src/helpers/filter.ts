@@ -39,10 +39,12 @@ export function createDefaultFilters(): Filters {
         shiny: crate.ShinyFilter.Square,
         iv: [
             undefined,
-            {
-                judgment: crate.IVJudgment.NoGood,
-                direction: crate.RangeDirection.AtMost,
-            },
+            undefined,
+            // e.g. 0 attack:
+            // {
+            //     judgment: crate.IVJudgment.NoGood,
+            //     direction: crate.RangeDirection.AtMost,
+            // },
             undefined,
             undefined,
             undefined,
