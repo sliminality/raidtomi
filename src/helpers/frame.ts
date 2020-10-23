@@ -27,12 +27,12 @@ export function formatSeed(seed: Seed): string {
 
 export interface FrameResult {
     skips: number
-    seed: string
+    shiny: Shininess
+    ivs: [number, number, number, number, number, number]
     ability: Ability
     gender: Gender
-    ivs: [number, number, number, number, number, number]
     nature: Nature
-    shiny: Shininess
+    seed: string
 }
 
 export function createFrame(skips: number, frame: Frame): FrameResult {
@@ -89,5 +89,77 @@ export function createFrame(skips: number, frame: Frame): FrameResult {
             crate.Shininess.Star,
             crate.Shininess.Square,
         ][frame.shiny],
+    }
+}
+
+export function formatAbility(
+    ability: Ability,
+    short: boolean = false
+): string {
+    switch (ability) {
+        case crate.Ability.First:
+            return short ? "1" : "First"
+        case crate.Ability.Second:
+            return short ? "2" : "Second"
+        case crate.Ability.Hidden:
+            return short ? "H" : "Hidden"
+        default:
+            return undefined as never
+    }
+}
+
+export function formatGender(gender: Gender): string {
+    switch (gender) {
+        case crate.Gender.Male:
+            return "M"
+        case crate.Gender.Female:
+            return "F"
+        case crate.Gender.Genderless:
+            return "-"
+        default:
+            return undefined as never
+    }
+}
+
+export function formatNature(nature: Nature): string {
+    return [
+        "Hardy",
+        "Lonely",
+        "Brave",
+        "Adamant",
+        "Naughty",
+        "Bold",
+        "Docile",
+        "Relaxed",
+        "Impish",
+        "Lax",
+        "Timid",
+        "Hasty",
+        "Serious",
+        "Jolly",
+        "Naive",
+        "Modest",
+        "Mild",
+        "Quiet",
+        "Bashful",
+        "Rash",
+        "Calm",
+        "Gentle",
+        "Sassy",
+        "Careful",
+        "Quirky",
+    ][nature]
+}
+
+export function formatShiny(shiny: Shininess): string {
+    switch (shiny) {
+        case crate.Shininess.None:
+            return "-"
+        case crate.Shininess.Star:
+            return "⭐️"
+        case crate.Shininess.Square:
+            return "✴️"
+        default:
+            return undefined as never
     }
 }

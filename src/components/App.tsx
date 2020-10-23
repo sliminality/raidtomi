@@ -1,4 +1,5 @@
 import * as React from "react"
+import { StyleSheet, css } from "aphrodite/no-important"
 import crate from "../../crate/Cargo.toml"
 
 import * as den from "../helpers/den"
@@ -6,6 +7,7 @@ import * as filter from "../helpers/filter"
 import * as frame from "../helpers/frame"
 import * as settings from "../helpers/settings"
 import { FilterForm } from "./FilterForm"
+import { Results } from "./Results"
 import { RaidForm } from "./RaidForm"
 import { Seed } from "./Seed"
 import { SettingsForm } from "./SettingsForm"
@@ -32,7 +34,7 @@ export function App(): JSX.Element {
     // State.
     const [state, setState] = React.useState<State>(createDefaultState())
     const [seed, setSeed] = React.useState<BigInt | undefined>()
-    const [result, setResult] = React.useState<frame.FrameResult>()
+    const [result, setResult] = React.useState<frame.FrameResult | undefined>()
 
     // Handlers.
     const updateSettings = (update: Partial<settings.Settings>) => {
@@ -108,10 +110,21 @@ export function App(): JSX.Element {
                 currentEncounter={currentEncounter}
                 currentGenderPool={genderPool}
             />
-            <Seed value={seed} updateValue={setSeed} />
-            <button type="submit" onClick={handleSearch}>
-                Search
-            </button>
+            <div className={css(styles.seedSubmit)}>
+                <Seed value={seed} updateValue={setSeed} />
+                <button type="submit" onClick={handleSearch}>
+                    Search
+                </button>
+            </div>
+            <Results result={result} currentEncounter={currentEncounter} />
         </React.Fragment>
     )
 }
+
+const styles = StyleSheet.create({
+    seedSubmit: {
+        marginTop: 12,
+        marginBottom: 12,
+        display: "flex",
+    },
+})
