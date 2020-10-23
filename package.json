@@ -7,6 +7,8 @@
   "scripts": {
     "start": "parcel index.html",
     "build": "parcel build index.html --public-url='./' --out-dir='docs'",
+    "deploy": "git checkout master && git branch -df gh-pages && git checkout -b gh-pages && npm run build && npm run cname && git add . && git commit -m 'Deploy' && git push -f && git checkout master",
+    "cname": "echo 'raidtomi.com' > 'CNAME'",
     "typecheck": "tsc --noEmit --watch"
   },
   "bin": {
