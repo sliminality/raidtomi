@@ -32,6 +32,7 @@ export function App(): JSX.Element {
     // State.
     const [state, setState] = React.useState<State>(createDefaultState())
     const [seed, setSeed] = React.useState<BigInt | undefined>()
+    const [result, setResult] = React.useState<frame.FrameResult>()
 
     // Handlers.
     const updateSettings = (update: Partial<settings.Settings>) => {
@@ -90,7 +91,7 @@ export function App(): JSX.Element {
         if (!result) {
             return
         }
-        console.log(result[0], frame.formatSeed(result[1].get_seed()))
+        setResult(frame.createFrame(result[0], result[1]))
     }
 
     return (
