@@ -16,7 +16,7 @@ export type RaidData = {
 
 export function createDefaultRaid(): RaidData {
     return {
-        den: 1,
+        den: 166, // First CT den.
         entryIndex: 0,
     }
 }
