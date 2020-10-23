@@ -8,6 +8,19 @@ The goal is to combine the Web-based convenience of [Leanny's Seed Checker](http
 
 Currently, Raidtomi only works in desktop Firefox and Chrome, and Android mobile browsers. This is because Safari [does not currently support](https://bugs.webkit.org/show_bug.cgi?id=190800) BigInt64Array and BigUint64Array, both of which are used in wasm-bindgen.
 
+## Locations
+
+In general:
+
+- `src` contains TypeScript and React code
+- `crate` contains Rust code
+
+Notable parts of the codebase:
+
+- [crate/src/core/frame.rs](https://github.com/sliminality/raidtomi/blob/master/crate/src/core/frame.rs) contains all raid generation logic [as documented](https://github.com/Admiral-Fish/RNGWriteups/blob/master/Gen%208/Raid%20Generation.md)
+- [crate/src/personal_data.rs](https://github.com/sliminality/raidtomi/blob/master/crate/src/personal_data.rs) constructs the in-memory personal table. This file can be mostly generated using [crate/src/core/personal.rs](https://github.com/sliminality/raidtomi/blob/master/crate/src/core/personal.rs), which reads the personal binary.
+- [src/helpers/data/dens.ts](https://github.com/sliminality/raidtomi/blob/master/src/helpers/data/dens.ts) contains the den listings
+
 ## Acknowledgements
 
 Thanks to the following people:
