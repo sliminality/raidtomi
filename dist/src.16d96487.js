@@ -77,4 +77,4 @@ var t,e="/Users/slim/git/raidtomii/node_modules/parcel-plugin-wasm.rs";const r={
 },{"fs":"sC8V"}],0:[function(require,module,exports) {
 var b=require("z1Am");b.register("wasm",require("ocK6"));b.load([["raidtomi_bg.bd580c97.wasm","tUt5"]]).then(function(){require("OGgv");});
 },{}]},{},[0], null)
-//# sourceMappingURL=/src.16d96487.js.map
+//# sourceMappingURL=src.16d96487.js.map

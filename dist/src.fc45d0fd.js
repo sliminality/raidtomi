@@ -31013,6 +31013,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.dens = void 0;
+// prettier-ignore
 var dens = [{
   id: "-",
   sw: [],
