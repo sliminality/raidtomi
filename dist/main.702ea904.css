@@ -1,0 +1,134 @@
+:root {
+    /* Colors */
+    --dark-base: 25, 23, 17;
+    --dark-text-color: rgb(var(--dark-base));
+    --medium-text-color: rgba(var(--dark-base), 0.6);
+    --light-text-color: rgba(var(--dark-base), 0.4);
+
+    --red-base: 211, 79, 67;
+    --light-red: rgba(var(--red-base), 0.3);
+    --red: rgba(var(--red-base), 1.0);
+
+    --blue-base: 54, 162, 221;
+    --light-blue: rgba(var(--blue-base), 0.3);
+    --blue: rgba(var(--blue-base), 1.0);
+
+    --dark-blue-base: 45, 130, 175;
+
+    --light-divider-color: rgba(var(--dark-base), 0.1);
+    --medium-divider-color: rgba(var(--dark-base), 0.3);
+
+    /* Shadows */
+    --focus-ring: 
+        0 0 0 1px var(--blue) inset,
+        0 0 0 3px var(--light-blue);
+    --focus-ring-error:
+        0 0 0 1px var(--red) inset,
+        0 0 0 3px var(--light-red);
+    --button-outline: 
+        0 0 0 1px rgba(var(--dark-blue-base), 1.0);
+}
+
+input {
+    /* Colors */
+    --input-background: rgba(var(--dark-base), 0.05);
+    --input-background-error: rgba(var(--red-base), 0.05);
+    
+    /* Shadows */
+    --input-border: 
+        0 0 0 1px rgba(var(--dark-base), 0.1) inset,
+        0 1px 2px 0 rgba(var(--dark-base), 0.1) inset;
+    --input-border-error: 0 0 0 2px rgba(var(--red-base), 0.8) inset;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    color: var(--dark-text-color);
+}
+
+a {
+    text-decoration: none;
+    color: var(--blue);
+}
+
+fieldset {
+    border: none;
+    padding: 0;
+    margin-right: 12px;
+}
+
+fieldset legend {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+    margin-right: 6px;
+}
+
+@supports (appearance: none) or (-webkit-appearance: none) or (-moz-appearance: none) {
+    input[type="text"], input[type="number"] {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+}
+
+input[type="text"],
+input[type="tel"],
+input[type="password"],
+input[type="search"],
+input[type="url"],
+input[type="number"] {
+    /* Remove default styles. */
+    outline: none;
+    background: none;
+    border: none;
+
+    padding: 4px 8px;
+    margin: 4px 8px;
+    border-radius: 4px;
+    box-shadow: var(--input-border);
+    background-color: var(--input-background);
+}
+
+input[type="text"]::placeholder,
+input[type="tel"]::placeholder,
+input[type="password"]::placeholder,
+input[type="search"]::placeholder,
+input[type="url"]::placeholder,
+input[type="number"]::placeholder {
+    color: var(--medium-text-color);
+}
+
+input[type="text"]:focus, 
+input[type="tel"]:focus,
+input[type="password"]:focus,
+input[type="search"]:focus,
+input[type="url"]:focus,
+input[type="number"]:focus {
+    box-shadow: var(--focus-ring);
+}
+
+input[type="text"]:invalid, 
+input[type="tel"]:invalid,
+input[type="password"]:invalid,
+input[type="search"]:invalid,
+input[type="url"]:invalid,
+input[type="number"]:invalid {
+    box-shadow: var(--input-border-error);
+    background-color: var(--input-background-error);
+}
+
+input[type="text"]:focus:invalid, 
+input[type="tel"]:focus:invalid,
+input[type="password"]:focus:invalid,
+input[type="search"]:focus:invalid,
+input[type="url"]:focus:invalid,
+input[type="number"]:focus:invalid {
+    box-shadow: var(--focus-ring-error);
+}
+
+
+/*# sourceMappingURL=/main.702ea904.css.map */
