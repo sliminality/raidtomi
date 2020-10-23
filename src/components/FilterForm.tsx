@@ -11,7 +11,7 @@ import { Switcher } from "./Switcher"
 import type { AbilityFilter, ShinyFilter } from "../../crate/pkg/raidtomi"
 import type { AbilityName } from "../helpers/ability"
 import type { Filters } from "../helpers/filter"
-import type { GenderPool } from "../helpers/den"
+import type { AbilityPool, GenderPool } from "../helpers/den"
 
 type FilterFormProps = {
     value: Filters
@@ -31,6 +31,7 @@ type ShinyFilterProps = {
 
 type AbilityFilterProps = {
     value: Filters["ability"]
+    abilityPool: AbilityPool | undefined
     abilityNames: [AbilityName, AbilityName, AbilityName] | undefined
     onChange: (value: Filters["ability"]) => void
 }
@@ -47,15 +48,25 @@ const renderRadioButton = <T extends unknown>(args: {
     onChange: (t: T) => void
     getDOMValue: (t: T) => string
     getDisplayValue: (t: T) => string
+    disabled: (variant: T | undefined) => boolean
 }) => (variant: T, i: number) => {
+    const isDisabled = args.disabled(variant)
     return (
-        <label className={css(styles.radioLabel)} key={i}>
+        <label
+            className={css(
+                styles.radioLabel,
+                isDisabled && styles.radioLabelDisabled
+            )}
+            title={isDisabled ? "This raid is ability-locked." : undefined}
+            key={i}
+        >
             <input
                 type="radio"
                 name={args.name}
                 value={args.getDOMValue(variant)}
                 checked={args.value === variant}
                 onChange={() => args.onChange(variant)}
+                disabled={isDisabled}
             />
             {args.getDisplayValue(variant)}
         </label>
@@ -84,6 +95,7 @@ function ShinyFilterForm({ value, onChange }: ShinyFilterProps): JSX.Element {
                     onChange,
                     getDOMValue: shinyFilterToString,
                     getDisplayValue: shinyFilterToString,
+                    disabled: () => false,
                 })
             )}
         </fieldset>
@@ -92,6 +104,7 @@ function ShinyFilterForm({ value, onChange }: ShinyFilterProps): JSX.Element {
 
 function AbilityFilterForm({
     value,
+    abilityPool,
     abilityNames,
     onChange,
 }: AbilityFilterProps): JSX.Element {
@@ -121,6 +134,27 @@ function AbilityFilterForm({
         }
     }
 
+    const disabled = (variant: AbilityFilter | undefined): boolean => {
+        // Unset filter is always permissible.
+        if (variant === undefined) {
+            return false
+        }
+        switch (abilityPool) {
+            case den.AbilityPool.FixedFirst:
+                return variant !== crate.AbilityFilter.First
+            case den.AbilityPool.FixedSecond:
+                return variant !== crate.AbilityFilter.Second
+            case den.AbilityPool.FixedHA:
+                return variant !== crate.AbilityFilter.Hidden
+            case den.AbilityPool.RandomNoHA:
+                return variant === crate.AbilityFilter.Hidden
+            case den.AbilityPool.Random:
+                return false
+            default:
+                return false
+        }
+    }
+
     return (
         <fieldset>
             <legend>Ability</legend>
@@ -130,12 +164,13 @@ function AbilityFilterForm({
                 crate.AbilityFilter.Second,
                 crate.AbilityFilter.Hidden,
             ].map(
-                renderRadioButton({
+                renderRadioButton<AbilityFilter | undefined>({
                     name: "filter-ability",
                     value,
                     onChange,
                     getDOMValue,
                     getDisplayValue,
+                    disabled,
                 })
             )}
         </fieldset>
@@ -259,6 +294,7 @@ export function FilterForm({
             <AbilityFilterForm
                 value={value.ability}
                 abilityNames={abilityNames}
+                abilityPool={currentEncounter && currentEncounter.abilityPool}
                 onChange={ability => updateValue({ ability })}
             />
             <GenderFilterForm
@@ -277,5 +313,9 @@ const styles = StyleSheet.create({
     radioLabel: {
         display: "flex",
         lineHeight: 1.4,
+    },
+    radioLabelDisabled: {
+        color: "var(--light-text-color)",
+        cursor: "not-allowed",
     },
 })

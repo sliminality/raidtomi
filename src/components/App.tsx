@@ -43,16 +43,20 @@ export function App(): JSX.Element {
         const current = state.settings
 
         // Changing the game title or badge level affects the tables for each den,
-        // which can affect the gender pool, so we reset the gender filter.
-        const shouldResetGenderFilter =
+        // which can affect the gender/ability pool, so we reset these filters
+        const shouldResetGenderOrAbilityFilter =
             (update.gameTitle && update.gameTitle !== current.gameTitle) ||
             (update.badgeLevel && update.badgeLevel !== current.badgeLevel)
 
         const nextState = {
             ...state,
             settings: { ...state.settings, ...update },
-            ...(shouldResetGenderFilter && {
-                filters: { ...state.filters, gender: undefined },
+            ...(shouldResetGenderOrAbilityFilter && {
+                filters: {
+                    ...state.filters,
+                    gender: undefined,
+                    ability: undefined,
+                },
             }),
         }
 
@@ -63,7 +67,11 @@ export function App(): JSX.Element {
             ...state,
             raid: { ...state.raid, ...update },
             // Since the new mon may have different gender lock, reset the gender filter.
-            filters: { ...state.filters, gender: undefined },
+            filters: {
+                ...state.filters,
+                gender: undefined,
+                ability: undefined,
+            },
         })
     }
     const updateFilters = (update: Partial<Filters>) => {
