@@ -1,3 +1,4 @@
+dist
 node_modules
 crate/pkg
 crate/target
