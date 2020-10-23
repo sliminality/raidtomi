@@ -24,7 +24,7 @@ export function createDefaultRaid(): RaidData {
 export type DenEncounter = {
     species: number // National Dex number.
     altForm: number // Index of alt form. 0 is base form.
-    minFlawlessIVs: 1 | 2 | 3 | 4
+    minFlawlessIVs: 1 | 2 | 3 | 4 | 5
     abilityPool: 0 | 1 | 2 | 3 | 4
     genderPool: 0 | 1 | 2 | 3
     isGmax: boolean
