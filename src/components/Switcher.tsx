@@ -73,7 +73,7 @@ export function Switcher<T extends { toString: () => string }>(
 
     return (
         <fieldset className={css(styles.fieldset)}>
-            <legend>hiyia</legend>
+            <legend>Gender</legend>
             {items.map(renderItem)}
         </fieldset>
     )
@@ -108,10 +108,12 @@ const styles = StyleSheet.create({
         ":disabled + label": {
             color: "grey",
             borderColor: "grey",
+            cursor: "not-allowed",
         },
         ":checked + label": {
             color: "blue",
             borderColor: "blue",
+            fontWeight: "bold",
         },
     },
     itemLabel: {
