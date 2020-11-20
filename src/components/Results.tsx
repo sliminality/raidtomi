@@ -9,7 +9,7 @@ import * as den from "../helpers/den"
 import * as frame from "../helpers/frame"
 
 type ResultsProps = {
-    result: frame.FrameResult | undefined
+    result: frame.FrameResult | null | undefined
     currentEncounter: den.DenEncounter | undefined
 }
 
@@ -22,6 +22,9 @@ export function Results({
     result,
     currentEncounter,
 }: ResultsProps): JSX.Element {
+    if (result === null) {
+        return <span>No result found within 10 million frames.</span>
+    }
     return (
         <table className={css(styles.table)}>
             <thead>

@@ -50,6 +50,8 @@ pub fn list_frames(raid: Raid, seed: u64, num_frames: usize) -> js_sys::Array {
 #[wasm_bindgen]
 pub struct SearchResult(pub u32, pub Frame);
 
+const MAX_FRAMES_TO_SEARCH: usize = 100_000_000;
+
 /// Search for a frame matching the given filter.
 #[wasm_bindgen]
 pub fn search(raid: Raid, seed: u64, filter: FrameFilter) -> Option<SearchResult> {
@@ -58,6 +60,7 @@ pub fn search(raid: Raid, seed: u64, filter: FrameFilter) -> Option<SearchResult
 
     if let Some((skips, Some(result))) = f
         .enumerate()
+        .take(MAX_FRAMES_TO_SEARCH)
         .find(|(_, result)| result.is_pass())
         .map(|(skips, result)| (skips, result.to_option()))
     {

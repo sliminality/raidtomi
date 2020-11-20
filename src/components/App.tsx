@@ -37,8 +37,12 @@ export function App(): JSX.Element {
      * State and lifecycle.
      */
     const [state, setState] = React.useState<State>(createDefaultState())
-    const [seed, setSeed] = React.useState<BigInt | undefined>()
-    const [result, setResult] = React.useState<frame.FrameResult | undefined>()
+    const [seed, setSeed] = React.useState<BigInt | undefined>(
+        BigInt("0xbb810e6006a2a035"),
+    )
+    const [result, setResult] = React.useState<
+        frame.FrameResult | null | undefined
+    >()
 
     const currentEncounter = React.useMemo(
         () => den.getCurrentRaidEntry(state.raid, state.settings),
@@ -96,7 +100,7 @@ export function App(): JSX.Element {
         }))
     }, [])
 
-    const handleSearch = React.useCallback(() => {
+    function handleSearch() {
         if (!currentEncounter) {
             return
         }
@@ -110,10 +114,11 @@ export function App(): JSX.Element {
             filter.createFilter(state.filters),
         )
         if (!result) {
+            setResult(null)
             return
         }
         setResult(frame.createFrame(result[0], result[1]))
-    }, [currentEncounter, seed, state.filters])
+    }
 
     /**
      * Render.
