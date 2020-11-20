@@ -50,6 +50,7 @@ export const enum GenderPool {
 //=============================================================================
 
 const LOCAL_RAID_KEY = "raid"
+const LOCAL_SEED_KEY = "seed"
 
 export function createDefaultRaid(): RaidData {
     const serializedRaid = localStorage.getItem(LOCAL_RAID_KEY)
@@ -64,6 +65,22 @@ export function createDefaultRaid(): RaidData {
 
 export function saveRaid(raid: RaidData): void {
     localStorage.setItem(LOCAL_RAID_KEY, JSON.stringify(raid))
+}
+
+export function createDefaultSeed(): BigInt {
+    const serializedSeed = localStorage.getItem(LOCAL_SEED_KEY)
+    if (serializedSeed) {
+        return BigInt(`0x${JSON.parse(serializedSeed)}`)
+    }
+    return BigInt("0xbb810e6006a2a035")
+}
+
+export function saveSeed(seed: BigInt): void {
+    localStorage.setItem(LOCAL_SEED_KEY, seed.toString(16))
+}
+
+export function clearSavedSeed(): void {
+    localStorage.removeItem(LOCAL_SEED_KEY)
 }
 
 export function createRaid(encounter: DenEncounter): Raid {

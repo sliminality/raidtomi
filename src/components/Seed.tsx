@@ -5,7 +5,7 @@ import * as React from "react"
 
 type SeedProps = {
     value: BigInt | undefined
-    updateValue: React.Dispatch<React.SetStateAction<BigInt | undefined>>
+    updateValue: (update: BigInt | undefined) => void
 }
 
 export function Seed({ value, updateValue }: SeedProps): JSX.Element {
@@ -58,7 +58,6 @@ export function Seed({ value, updateValue }: SeedProps): JSX.Element {
                     }
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    placeholder="bb810e6006a2a035"
                     pattern="[0-9a-fA-F]{16}"
                     size={16}
                 />

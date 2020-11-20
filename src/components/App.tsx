@@ -50,7 +50,7 @@ export function App(): JSX.Element {
      */
     const [state, setState] = React.useState<State>(createDefaultState())
     const [seed, setSeed] = React.useState<BigInt | undefined>(
-        BigInt("0xbb810e6006a2a035"),
+        den.createDefaultSeed(),
     )
     const [result, setResult] = React.useState<
         frame.FrameResult | null | undefined
@@ -158,6 +158,15 @@ export function App(): JSX.Element {
         [state],
     )
 
+    const updateSeed = React.useCallback((update: BigInt | undefined) => {
+        setSeed(update)
+        if (update === undefined) {
+            den.clearSavedSeed()
+        } else {
+            den.saveSeed(update)
+        }
+    }, [])
+
     const handleDenPreviewChange = (index: number) => {
         updateRaid({ entryIndex: index })
     }
@@ -210,7 +219,7 @@ export function App(): JSX.Element {
                 currentGenderPool={genderPool}
             />
             <div className={css(styles.seedSubmit)}>
-                <Seed value={seed} updateValue={setSeed} />
+                <Seed value={seed} updateValue={updateSeed} />
                 <Button
                     type="submit"
                     onClick={handleSearch}
