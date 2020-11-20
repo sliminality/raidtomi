@@ -26,20 +26,24 @@ export function Results({
         return <span>No result found within 10 million frames.</span>
     }
     return (
-        <table className={css(styles.table)}>
-            <thead>
-                <tr>
-                    <th>Skips</th>
-                    <th>Shiny</th>
-                    <th>IVs</th>
-                    <th>Ability</th>
-                    <th>Gender</th>
-                    <th>Nature</th>
-                    <th>Seed</th>
-                </tr>
-            </thead>
-            <tbody>{result && renderRow({ result, currentEncounter })}</tbody>
-        </table>
+        <section className={css(styles.wrapper)}>
+            <table className={css(styles.table)}>
+                <thead>
+                    <tr>
+                        <th>Skips</th>
+                        <th>Shiny</th>
+                        <th>IVs</th>
+                        <th>Ability</th>
+                        <th>Gender</th>
+                        <th>Nature</th>
+                        <th>Seed</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {result && renderRow({ result, currentEncounter })}
+                </tbody>
+            </table>
+        </section>
     )
 }
 
@@ -89,9 +93,13 @@ function Cell({ children, title }: CellProps) {
 }
 
 const styles = StyleSheet.create({
+    wrapper: {
+        width: "100%",
+        overflow: "auto",
+        marginTop: 12,
+    },
     table: {
-        borderCollapse: "separate",
-        borderSpacing: 12,
         textAlign: "left",
+        borderSpacing: 8,
     },
 })

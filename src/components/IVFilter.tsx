@@ -113,48 +113,51 @@ function SingleIVFilter({
     return (
         <label className={css(styles.singleIVFilter)}>
             <div className={css(styles.ivLabel)}>{name}</div>
-            <Switcher<RangeDirection | AnyOption>
-                title={<ScreenReaderText>Direction</ScreenReaderText>}
-                groupName={`filter-iv-range-direction-${name}`}
-                allowDeselect={false}
-                value={value ? value.direction : ANY}
-                items={[
-                    {
-                        item: ANY,
-                        disabled: false,
-                    },
-                    {
-                        item: crate.RangeDirection.AtLeast,
-                        disabled: false,
-                    },
-                    {
-                        item: crate.RangeDirection.AtMost,
-                        disabled: false,
-                    },
-                ]}
-                onChange={handleRangeDirectionChange}
-                renderItemTitle={renderItemTitle}
-                getItemAriaLabel={getAriaItemLabel}
-            />
-            <select
-                name="iv-judgment"
-                value={value ? value.judgment : "-"}
-                onChange={handleJudgmentChange}
-            >
-                {[
-                    "-" as const,
-                    crate.IVJudgment.Best,
-                    crate.IVJudgment.Fantastic,
-                    crate.IVJudgment.VeryGood,
-                    crate.IVJudgment.PrettyGood,
-                    crate.IVJudgment.Decent,
-                    crate.IVJudgment.NoGood,
-                ].map((judgment, index) => (
-                    <option key={index} value={judgment}>
-                        {formatJudgment(judgment)}
-                    </option>
-                ))}
-            </select>
+            <div className={css(styles.ivFilterOptions)}>
+                <Switcher<RangeDirection | AnyOption>
+                    className={css(styles.rangeDirectionSwitcher)}
+                    title={<ScreenReaderText>Direction</ScreenReaderText>}
+                    groupName={`filter-iv-range-direction-${name}`}
+                    allowDeselect={false}
+                    value={value ? value.direction : ANY}
+                    items={[
+                        {
+                            item: ANY,
+                            disabled: false,
+                        },
+                        {
+                            item: crate.RangeDirection.AtLeast,
+                            disabled: false,
+                        },
+                        {
+                            item: crate.RangeDirection.AtMost,
+                            disabled: false,
+                        },
+                    ]}
+                    onChange={handleRangeDirectionChange}
+                    renderItemTitle={renderItemTitle}
+                    getItemAriaLabel={getAriaItemLabel}
+                />
+                <select
+                    name="iv-judgment"
+                    value={value ? value.judgment : "-"}
+                    onChange={handleJudgmentChange}
+                >
+                    {[
+                        "-" as const,
+                        crate.IVJudgment.Best,
+                        crate.IVJudgment.Fantastic,
+                        crate.IVJudgment.VeryGood,
+                        crate.IVJudgment.PrettyGood,
+                        crate.IVJudgment.Decent,
+                        crate.IVJudgment.NoGood,
+                    ].map((judgment, index) => (
+                        <option key={index} value={judgment}>
+                            {formatJudgment(judgment)}
+                        </option>
+                    ))}
+                </select>
+            </div>
         </label>
     )
 }
@@ -198,11 +201,46 @@ export function IVFilter({ value, onChange }: IVFilterProps): JSX.Element {
 
 const styles = StyleSheet.create({
     singleIVFilter: {
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr 1.5fr",
-        alignItems: "center",
+        display: "flex",
+        flexDirection: "column",
+        fontSize: 14,
+        lineHeight: 1.2,
+        marginBottom: 6,
+
+        "@media (min-width: 600px)": {
+            display: "grid",
+            gridTemplateColumns: "0.5fr 1.5fr",
+            alignItems: "center",
+        },
     },
     ivLabel: {
-        marginRight: 16,
+        marginTop: 8,
+        marginBottom: 8,
+
+        "@media (min-width: 600px)": {
+            marginRight: 12,
+        },
+    },
+    ivFilterOptions: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+
+        "@media (min-width: 400px)": {
+            flexDirection: "row",
+        },
+
+        "@media (min-width: 600px)": {
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            alignItems: "center",
+        },
+    },
+    rangeDirectionSwitcher: {
+        marginBottom: 8,
+
+        "@media (min-width: 600px)": {
+            marginBottom: 0,
+        },
     },
 })

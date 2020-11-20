@@ -213,14 +213,19 @@ export function App(): JSX.Element {
 
 const styles = StyleSheet.create({
     appWrapper: {
-        padding: 12,
+        overflow: "hidden",
+        width: "90%",
+        maxWidth: 720,
+        margin: "0 auto",
+        padding: "12px 0",
         display: "flex",
         flexDirection: "column",
-        maxWidth: 800,
-        margin: "0 auto",
+        alignItems: "center",
     },
     header: {
-        "@media(min-width: 600px)": {
+        width: "100%",
+
+        "@media (min-width: 600px)": {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",

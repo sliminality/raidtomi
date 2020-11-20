@@ -1,7 +1,7 @@
 import * as React from "react"
 import { StyleSheet, css } from "aphrodite/no-important"
 
-export function Footer() {
+export function Footer(): JSX.Element {
     return (
         <footer className={css(styles.footer)}>
             Thanks to{" "}
@@ -46,5 +46,6 @@ const styles = StyleSheet.create({
         marginTop: 48,
         color: "var(--light-text-color)",
         justifySelf: "end",
+        lineHeight: 1.4,
     },
 })

@@ -334,10 +334,11 @@ const styles = StyleSheet.create({
     filterWrapper: {
         display: "flex",
         flexWrap: "wrap",
+        justifyContent: "space-between",
     },
     radioLabel: {
         display: "flex",
-        lineHeight: 1.4,
+        lineHeight: 1.5,
     },
     radioLabelDisabled: {
         color: "var(--light-text-color)",

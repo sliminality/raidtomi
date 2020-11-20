@@ -19,6 +19,7 @@ export type SwitcherProps<T extends { toString: () => string }> =
           renderItemTitle: (item: T) => React.ReactNode
           getItemAriaLabel: (item: T) => string
           allowDeselect: true
+          className?: string
       }
     | {
           title: React.ReactNode
@@ -29,6 +30,7 @@ export type SwitcherProps<T extends { toString: () => string }> =
           renderItemTitle: (item: T) => React.ReactNode
           getItemAriaLabel: (item: T) => string
           allowDeselect?: false
+          className?: string
       }
 
 export function Switcher<T extends { toString: () => string }>(
@@ -44,6 +46,7 @@ export function Switcher<T extends { toString: () => string }>(
         getItemAriaLabel,
         groupName,
         title,
+        className,
     } = prop$
     const handleClick = (item: T) => () => {
         // If item is currently selected, check if deselection is allowed and
@@ -78,7 +81,7 @@ export function Switcher<T extends { toString: () => string }>(
     }
 
     return (
-        <fieldset className={css(styles.fieldset)}>
+        <fieldset className={`${css(styles.fieldset)} ${className}`}>
             <legend>{title}</legend>
             {items.map(renderItem)}
         </fieldset>
@@ -86,7 +89,9 @@ export function Switcher<T extends { toString: () => string }>(
 }
 
 const styles = StyleSheet.create({
-    fieldset: {},
+    fieldset: {
+        marginBottom: 8,
+    },
     itemWrapper: {
         display: "inline-flex",
         lineHeight: 1.4,

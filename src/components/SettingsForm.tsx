@@ -48,7 +48,7 @@ function GameTitle({ value, onChange }: GameTitleProps) {
                     name: "settings-game-title",
                     value,
                     onChange,
-                })
+                }),
             )}
         </fieldset>
     )
@@ -67,7 +67,7 @@ function BadgeLevel({ value, onChange }: BadgeLevelProps) {
                     name: "settings-badge-level",
                     value,
                     onChange,
-                })
+                }),
             )}
         </fieldset>
     )
