@@ -1,4 +1,5 @@
 ///! Pokedex-type data.
+use std::fmt;
 use std::fs::File;
 use std::io;
 use std::io::prelude::*;
@@ -81,6 +82,28 @@ impl Mon {
     }
 }
 
+impl fmt::Display for Mon {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "Mon::new({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})",
+            self.hp,
+            self.atk,
+            self.def,
+            self.spe,
+            self.spa,
+            self.spd,
+            self.gender_ratio,
+            self.ability_1,
+            self.ability_2,
+            self.ability_hidden,
+            self.form_stat_index,
+            self.form_count,
+            self.included,
+        )
+    }
+}
+
 #[wasm_bindgen]
 impl Mon {
     /// Returns abilities.
@@ -151,9 +174,26 @@ impl<'a> PersonalTable {
     }
 }
 
+impl fmt::Display for PersonalTable {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        for &mon in self.entries.iter() {
+            writeln!(f, "{},", mon)?
+        }
+        Ok(())
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
+
+    #[test]
+    #[ignore]
+    fn print_info() {
+        let table = PersonalTable::from_bytes("resources/personal").unwrap();
+        println!("{}", table);
+        assert!(false);
+    }
 
     #[test]
     fn test_base_info() {
@@ -193,7 +233,7 @@ mod test {
                 ability_1: 46,
                 ability_2: 46,
                 ability_hidden: 46,
-                form_stat_index: 1178,
+                form_stat_index: 1187,
                 form_count: 2,
                 included: true
             })
@@ -238,7 +278,7 @@ mod test {
                 ability_1: 53,
                 ability_2: 119,
                 ability_hidden: 15,
-                form_stat_index: 1107,
+                form_stat_index: 1116,
                 form_count: 4,
                 included: true
             })
@@ -258,7 +298,7 @@ mod test {
                 ability_1: 53,
                 ability_2: 119,
                 ability_hidden: 15,
-                form_stat_index: 1107,
+                form_stat_index: 1116,
                 form_count: 4,
                 included: true
             })
@@ -278,7 +318,7 @@ mod test {
                 ability_1: 53,
                 ability_2: 119,
                 ability_hidden: 15,
-                form_stat_index: 1107,
+                form_stat_index: 1116,
                 form_count: 4,
                 included: true
             })
