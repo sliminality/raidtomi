@@ -33,12 +33,25 @@ export function createDefaultState(): State {
 }
 
 export function App(): JSX.Element {
-    // State.
+    /**
+     * State and lifecycle.
+     */
     const [state, setState] = React.useState<State>(createDefaultState())
     const [seed, setSeed] = React.useState<BigInt | undefined>()
     const [result, setResult] = React.useState<frame.FrameResult | undefined>()
 
-    // Handlers.
+    const currentEncounter = React.useMemo(
+        () => den.getCurrentRaidEntry(state.raid, state.settings),
+        [state.raid, state.settings],
+    )
+    const genderPool = React.useMemo(
+        () => den.getGenderPoolForEncounter(currentEncounter),
+        [currentEncounter],
+    )
+
+    /**
+     * Helpers.
+     */
     const updateSettings = (update: Partial<settings.Settings>) => {
         const current = state.settings
 
@@ -62,8 +75,9 @@ export function App(): JSX.Element {
 
         setState(nextState)
     }
-    const updateRaid = (update: Partial<RaidData>) => {
-        setState({
+
+    const updateRaid = React.useCallback((update: Partial<RaidData>) => {
+        setState(state => ({
             ...state,
             raid: { ...state.raid, ...update },
             // Since the new mon may have different gender lock, reset the gender filter.
@@ -72,22 +86,17 @@ export function App(): JSX.Element {
                 gender: undefined,
                 ability: undefined,
             },
-        })
-    }
-    const updateFilters = (update: Partial<Filters>) => {
-        setState({ ...state, filters: { ...state.filters, ...update } })
-    }
+        }))
+    }, [])
 
-    const currentEncounter = React.useMemo(
-        () => den.getCurrentRaidEntry(state.raid, state.settings),
-        [state.raid, state.settings]
-    )
-    const genderPool = React.useMemo(
-        () => den.getGenderPoolForEncounter(currentEncounter),
-        [currentEncounter]
-    )
+    const updateFilters = React.useCallback((update: Partial<Filters>) => {
+        setState(state => ({
+            ...state,
+            filters: { ...state.filters, ...update },
+        }))
+    }, [])
 
-    const handleSearch = () => {
+    const handleSearch = React.useCallback(() => {
         if (!currentEncounter) {
             return
         }
@@ -98,14 +107,17 @@ export function App(): JSX.Element {
         const result = crate.search(
             raid,
             seed,
-            filter.createFilter(state.filters)
+            filter.createFilter(state.filters),
         )
         if (!result) {
             return
         }
         setResult(frame.createFrame(result[0], result[1]))
-    }
+    }, [currentEncounter, seed, state.filters])
 
+    /**
+     * Render.
+     */
     return (
         <div className={css(styles.appWrapper)}>
             <SettingsForm value={state.settings} updateValue={updateSettings} />

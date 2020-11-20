@@ -55,7 +55,7 @@ const renderRadioButton = <T extends unknown>(args: {
         <label
             className={css(
                 styles.radioLabel,
-                isDisabled && styles.radioLabelDisabled
+                isDisabled && styles.radioLabelDisabled,
             )}
             title={isDisabled ? "This raid is ability-locked." : undefined}
             key={i}
@@ -74,16 +74,19 @@ const renderRadioButton = <T extends unknown>(args: {
 }
 
 function ShinyFilterForm({ value, onChange }: ShinyFilterProps): JSX.Element {
-    const shinyFilterToString = (filter: ShinyFilter | undefined) => {
-        switch (filter) {
-            case crate.ShinyFilter.Shiny:
-                return "Shiny"
-            case crate.ShinyFilter.Square:
-                return "Square"
-            default:
-                return "Any"
-        }
-    }
+    const shinyFilterToString = React.useCallback(
+        (filter: ShinyFilter | undefined) => {
+            switch (filter) {
+                case crate.ShinyFilter.Shiny:
+                    return "Shiny"
+                case crate.ShinyFilter.Square:
+                    return "Square"
+                default:
+                    return "Any"
+            }
+        },
+        [],
+    )
 
     return (
         <fieldset>
@@ -96,7 +99,7 @@ function ShinyFilterForm({ value, onChange }: ShinyFilterProps): JSX.Element {
                     getDOMValue: shinyFilterToString,
                     getDisplayValue: shinyFilterToString,
                     disabled: () => false,
-                })
+                }),
             )}
         </fieldset>
     )
@@ -108,52 +111,61 @@ function AbilityFilterForm({
     abilityNames,
     onChange,
 }: AbilityFilterProps): JSX.Element {
-    const getDOMValue = (filter: AbilityFilter | undefined) => {
-        switch (filter) {
-            case crate.AbilityFilter.First:
-                return "First"
-            case crate.AbilityFilter.Second:
-                return "Second"
-            case crate.AbilityFilter.Hidden:
-                return "Hidden"
-            default:
-                return "Any"
-        }
-    }
+    const getDOMValue = React.useCallback(
+        (filter: AbilityFilter | undefined) => {
+            switch (filter) {
+                case crate.AbilityFilter.First:
+                    return "First"
+                case crate.AbilityFilter.Second:
+                    return "Second"
+                case crate.AbilityFilter.Hidden:
+                    return "Hidden"
+                default:
+                    return "Any"
+            }
+        },
+        [],
+    )
 
-    const getDisplayValue = (filter: AbilityFilter | undefined) => {
-        switch (filter) {
-            case crate.AbilityFilter.First:
-                return abilityNames ? `${abilityNames[0]} (1)` : "First"
-            case crate.AbilityFilter.Second:
-                return abilityNames ? `${abilityNames[1]} (2)` : "Second"
-            case crate.AbilityFilter.Hidden:
-                return abilityNames ? `${abilityNames[2]} (HA)` : "Hidden"
-            default:
-                return "Any"
-        }
-    }
+    const getDisplayValue = React.useCallback(
+        (filter: AbilityFilter | undefined) => {
+            switch (filter) {
+                case crate.AbilityFilter.First:
+                    return abilityNames ? `${abilityNames[0]} (1)` : "First"
+                case crate.AbilityFilter.Second:
+                    return abilityNames ? `${abilityNames[1]} (2)` : "Second"
+                case crate.AbilityFilter.Hidden:
+                    return abilityNames ? `${abilityNames[2]} (HA)` : "Hidden"
+                default:
+                    return "Any"
+            }
+        },
+        [abilityNames],
+    )
 
-    const disabled = (variant: AbilityFilter | undefined): boolean => {
-        // Unset filter is always permissible.
-        if (variant === undefined) {
-            return false
-        }
-        switch (abilityPool) {
-            case den.AbilityPool.FixedFirst:
-                return variant !== crate.AbilityFilter.First
-            case den.AbilityPool.FixedSecond:
-                return variant !== crate.AbilityFilter.Second
-            case den.AbilityPool.FixedHA:
-                return variant !== crate.AbilityFilter.Hidden
-            case den.AbilityPool.RandomNoHA:
-                return variant === crate.AbilityFilter.Hidden
-            case den.AbilityPool.Random:
+    const disabled = React.useCallback(
+        (variant: AbilityFilter | undefined): boolean => {
+            // Unset filter is always permissible.
+            if (variant === undefined) {
                 return false
-            default:
-                return false
-        }
-    }
+            }
+            switch (abilityPool) {
+                case den.AbilityPool.FixedFirst:
+                    return variant !== crate.AbilityFilter.First
+                case den.AbilityPool.FixedSecond:
+                    return variant !== crate.AbilityFilter.Second
+                case den.AbilityPool.FixedHA:
+                    return variant !== crate.AbilityFilter.Hidden
+                case den.AbilityPool.RandomNoHA:
+                    return variant === crate.AbilityFilter.Hidden
+                case den.AbilityPool.Random:
+                    return false
+                default:
+                    return false
+            }
+        },
+        [abilityPool],
+    )
 
     return (
         <fieldset>
@@ -171,7 +183,7 @@ function AbilityFilterForm({
                     getDOMValue,
                     getDisplayValue,
                     disabled,
-                })
+                }),
             )}
         </fieldset>
     )
@@ -182,12 +194,15 @@ function GenderFilterForm({
     genderPool,
     onChange,
 }: GenderFilterProps): JSX.Element {
-    const isGenderLocked =
-        genderPool === den.GenderPool.LockedGenderless ||
-        genderPool === den.GenderPool.LockedMale ||
-        genderPool === den.GenderPool.LockedFemale
+    const isGenderLocked = React.useMemo(
+        () =>
+            genderPool === den.GenderPool.LockedGenderless ||
+            genderPool === den.GenderPool.LockedMale ||
+            genderPool === den.GenderPool.LockedFemale,
+        [genderPool],
+    )
 
-    const switcherValue = (() => {
+    const switcherValue = React.useMemo(() => {
         // If pool is random, check the filter.
         if (genderPool === den.GenderPool.Random) {
             switch (value) {
@@ -202,9 +217,9 @@ function GenderFilterForm({
             // If pool is locked, use the same value.
             return genderPool
         }
-    })()
+    }, [value, genderPool])
 
-    const renderItemTitle = (item: GenderPool) => {
+    const renderItemTitle = React.useCallback((item: GenderPool) => {
         switch (item) {
             case den.GenderPool.Random:
                 return "Any"
@@ -215,9 +230,9 @@ function GenderFilterForm({
             case den.GenderPool.LockedGenderless:
                 return "Genderless ∅"
         }
-    }
+    }, [])
 
-    const getAriaItemLabel = (item: GenderPool) => {
+    const getAriaItemLabel = React.useCallback((item: GenderPool) => {
         switch (item) {
             case den.GenderPool.Random:
                 return "any gender"
@@ -228,21 +243,24 @@ function GenderFilterForm({
             case den.GenderPool.LockedGenderless:
                 return "genderless only"
         }
-    }
+    }, [])
 
-    const handleChange = (item: GenderPool | undefined) => {
-        if (
-            item === undefined ||
-            item === den.GenderPool.Random ||
-            item === den.GenderPool.LockedGenderless
-        ) {
-            onChange(undefined)
-        } else if (item === den.GenderPool.LockedMale) {
-            onChange(crate.GenderFilter.Male)
-        } else if (item === den.GenderPool.LockedFemale) {
-            onChange(crate.GenderFilter.Female)
-        }
-    }
+    const handleChange = React.useCallback(
+        (item: GenderPool | undefined) => {
+            if (
+                item === undefined ||
+                item === den.GenderPool.Random ||
+                item === den.GenderPool.LockedGenderless
+            ) {
+                onChange(undefined)
+            } else if (item === den.GenderPool.LockedMale) {
+                onChange(crate.GenderFilter.Male)
+            } else if (item === den.GenderPool.LockedFemale) {
+                onChange(crate.GenderFilter.Female)
+            }
+        },
+        [onChange],
+    )
 
     return (
         <Switcher<GenderPool>
@@ -282,7 +300,7 @@ export function FilterForm({
 }: FilterFormProps): JSX.Element {
     const abilityNames = React.useMemo(
         () => ability.getAbilitiesForEntry(currentEncounter),
-        [currentEncounter]
+        [currentEncounter],
     )
 
     return (

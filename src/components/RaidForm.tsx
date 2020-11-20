@@ -131,11 +131,11 @@ export function RaidForm({
 
     const encounters = React.useMemo(
         () => den.getEntriesForSettings(settings)(value.den) || [],
-        [value.den, settings]
+        [value.den, settings],
     )
 
     const handleEncounterSelectChange = (
-        e: React.ChangeEvent<HTMLSelectElement>
+        e: React.ChangeEvent<HTMLSelectElement>,
     ) => {
         updateValue({ entryIndex: parseInt(e.currentTarget.value, 10) })
     }

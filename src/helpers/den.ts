@@ -63,7 +63,7 @@ export function createRaid(encounter: DenEncounter): Raid {
         encounter.minFlawlessIVs,
         encounter.isGmax,
         encounter.abilityPool,
-        encounter.genderPool
+        encounter.genderPool,
     )
 }
 
@@ -79,16 +79,16 @@ const getDenByIndex = (denIndex: number): Den | undefined => {
  * Filters all the entries corresponding to a specific badge level.
  */
 const getEntriesForBadgeLevel = (badgeLevel: settings.BadgeLevel) => (
-    entries: Array<DenEncounter>
+    entries: Array<DenEncounter>,
 ): Array<DenEncounter> => {
     const filterEntry = (predicate: (index: number) => boolean) => (
-        entry: DenEncounter
+        entry: DenEncounter,
     ): boolean =>
         entry.stars
             .map((isPresent, starCount) => (isPresent ? starCount : undefined))
             .filter(
                 starCount =>
-                    typeof starCount === "number" && predicate(starCount)
+                    typeof starCount === "number" && predicate(starCount),
             ).length > 0
 
     switch (badgeLevel) {
@@ -108,7 +108,7 @@ const getEntriesForBadgeLevel = (badgeLevel: settings.BadgeLevel) => (
 
 const getEntriesForTitle = (
     title: settings.GameTitle,
-    den: Den
+    den: Den,
 ): Array<DenEncounter> => {
     switch (title) {
         case settings.GameTitle.Sword:
@@ -119,20 +119,20 @@ const getEntriesForTitle = (
 }
 
 export const getEntriesForSettings = (settings: settings.Settings) => (
-    denIndex: number
+    denIndex: number,
 ): Array<DenEncounter> | undefined => {
     const den = getDenByIndex(denIndex)
     if (!den) {
         return
     }
     return getEntriesForBadgeLevel(settings.badgeLevel)(
-        getEntriesForTitle(settings.gameTitle, den)
+        getEntriesForTitle(settings.gameTitle, den),
     )
 }
 
 export function getCurrentRaidEntry(
     raid: RaidData,
-    settings: settings.Settings
+    settings: settings.Settings,
 ): DenEncounter | undefined {
     const entries = getEntriesForSettings(settings)(raid.den)
     if (!entries) {
@@ -192,7 +192,7 @@ const getGenderPoolForRatio = (ratio: number): GenderPool => {
  * the den settings, and if that is a random roll, we check the gender ratio.
  */
 export const getGenderPoolForEncounter = (
-    encounter: DenEncounter | undefined
+    encounter: DenEncounter | undefined,
 ): GenderPool | undefined => {
     if (!encounter) {
         return
@@ -204,7 +204,7 @@ export const getGenderPoolForEncounter = (
         const personal = crate.get_personal_info(species, altForm)
         if (!personal) {
             throw new Error(
-                `Invalid personal id: species ${species}, alt form ${altForm}`
+                `Invalid personal id: species ${species}, alt form ${altForm}`,
             )
         }
         return getGenderPoolForRatio(personal.get_gender_ratio())

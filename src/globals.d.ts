@@ -11,6 +11,8 @@ declare module "*.toml" {
     export default _
 }
 
-declare type Values<T extends Object> = {
+declare type Values<T extends unknown> = {
     [K in keyof T]: T[K]
 }[keyof T]
+
+declare function unreachable(): never

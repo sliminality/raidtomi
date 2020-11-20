@@ -28,7 +28,7 @@ export type Filters = {
         SingleIVFilterData | undefined,
         SingleIVFilterData | undefined,
         SingleIVFilterData | undefined,
-        SingleIVFilterData | undefined
+        SingleIVFilterData | undefined,
     ]
     ability: AbilityFilter | undefined
     gender: GenderFilter | undefined
@@ -56,7 +56,7 @@ export function createDefaultFilters(): Filters {
 }
 
 const createSingleIVFilter = (
-    f: SingleIVFilterData | undefined
+    f: SingleIVFilterData | undefined,
 ): SingleIVFilter | undefined => {
     if (!f) {
         return f

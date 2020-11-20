@@ -18,7 +18,10 @@ type ResultRowProps = {
     currentEncounter: den.DenEncounter | undefined
 }
 
-export function Results({ result, currentEncounter }: ResultsProps) {
+export function Results({
+    result,
+    currentEncounter,
+}: ResultsProps): JSX.Element {
     return (
         <table className={css(styles.table)}>
             <thead>
@@ -60,7 +63,7 @@ function renderRow({ result, currentEncounter }: ResultRowProps) {
                 {abilities
                     ? `${abilities[result.ability]} (${frame.formatAbility(
                           result.ability,
-                          true
+                          true,
                       )})`
                     : frame.formatAbility(result.ability)}
             </Cell>
