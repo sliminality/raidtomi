@@ -48,6 +48,7 @@ pub fn list_frames(raid: Raid, seed: u64, num_frames: usize) -> js_sys::Array {
 }
 
 #[wasm_bindgen]
+#[derive(Debug)]
 pub struct SearchResult(pub u32, pub Frame);
 
 const MAX_FRAMES_TO_SEARCH: usize = 100_000_000;
@@ -67,5 +68,57 @@ pub fn search(raid: Raid, seed: u64, filter: FrameFilter) -> Option<SearchResult
         Some(SearchResult(skips as u32, result))
     } else {
         None
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use self::core::filter::{
+        AbilityFilter, GenderFilter, IVJudgment, ShinyFilter, SingleIVFilter,
+    };
+    use self::core::mon::{Ability, Gender, IVs, Shininess};
+    use super::*;
+
+    #[test]
+    fn test_iv_search() {
+        let result = search(
+            Raid::new(346, 0, 4, false, 4, 0), // 5* Cradily, Den 166,
+            0xbb810e6006a2a035,
+            FrameFilter::new().set_ivs(
+                Some(SingleIVFilter::new_at_least(IVJudgment::Best)),
+                Some(SingleIVFilter::new_at_least(IVJudgment::Best)),
+                Some(SingleIVFilter::new_at_least(IVJudgment::Best)),
+                Some(SingleIVFilter::new_at_least(IVJudgment::Best)),
+                Some(SingleIVFilter::new_at_least(IVJudgment::Best)),
+                Some(SingleIVFilter::new_at_least(IVJudgment::Best)),
+            ),
+        )
+        .unwrap();
+        assert_eq!(result.1.ivs, IVs(31, 31, 31, 31, 31, 31));
+    }
+
+    #[test]
+    fn test_timeout_search() {
+        let result = search(
+            Raid::new(346, 0, 4, false, 4, 0), // 5* Cradily, Den 166,
+            0xbb810e6006a2a035,
+            FrameFilter::new()
+                .set_shiny(ShinyFilter::Square)
+                .set_ability(AbilityFilter::Hidden)
+                .set_gender(GenderFilter::Male)
+                .set_ivs(
+                    Some(SingleIVFilter::new_at_least(IVJudgment::Best)),
+                    Some(SingleIVFilter::new_at_least(IVJudgment::Best)),
+                    Some(SingleIVFilter::new_at_least(IVJudgment::Best)),
+                    Some(SingleIVFilter::new_at_least(IVJudgment::Best)),
+                    Some(SingleIVFilter::new_at_least(IVJudgment::Best)),
+                    Some(SingleIVFilter::new_at_least(IVJudgment::Best)),
+                ),
+        )
+        .unwrap();
+        assert_eq!(result.1.ivs, IVs(31, 31, 31, 31, 31, 31));
+        assert_eq!(result.1.shiny, Shininess::Square);
+        assert_eq!(result.1.gender, Gender::Male);
+        assert_eq!(result.1.ability, Ability::Hidden);
     }
 }

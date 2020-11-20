@@ -153,23 +153,28 @@ impl Filter<IVs> for IVFilter {
             if !filter.test(&value.0) {
                 return false;
             }
-        } else if let Some(filter) = self.1 {
+        }
+        if let Some(filter) = self.1 {
             if !filter.test(&value.1) {
                 return false;
             }
-        } else if let Some(filter) = self.2 {
+        }
+        if let Some(filter) = self.2 {
             if !filter.test(&value.2) {
                 return false;
             }
-        } else if let Some(filter) = self.3 {
+        }
+        if let Some(filter) = self.3 {
             if !filter.test(&value.3) {
                 return false;
             }
-        } else if let Some(filter) = self.4 {
+        }
+        if let Some(filter) = self.4 {
             if !filter.test(&value.4) {
                 return false;
             }
-        } else if let Some(filter) = self.5 {
+        }
+        if let Some(filter) = self.5 {
             if !filter.test(&value.5) {
                 return false;
             }
