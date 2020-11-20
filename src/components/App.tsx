@@ -97,49 +97,66 @@ export function App(): JSX.Element {
     /**
      * Helpers.
      */
-    const updateSettings = (update: Partial<settings.Settings>) => {
-        const current = state.settings
+    const updateSettings = React.useCallback(
+        (update: Partial<settings.Settings>) => {
+            const current = state.settings
 
-        // Changing the game title or badge level affects the tables for each den,
-        // which can affect the gender/ability pool, so we reset these filters
-        const shouldResetGenderOrAbilityFilter =
-            (update.gameTitle && update.gameTitle !== current.gameTitle) ||
-            (update.badgeLevel && update.badgeLevel !== current.badgeLevel)
+            // Changing the game title or badge level affects the tables for each den,
+            // which can affect the gender/ability pool, so we reset these filters
+            const shouldResetGenderOrAbilityFilter =
+                (update.gameTitle && update.gameTitle !== current.gameTitle) ||
+                (update.badgeLevel && update.badgeLevel !== current.badgeLevel)
 
-        const nextState = {
-            ...state,
-            settings: { ...state.settings, ...update },
-            ...(shouldResetGenderOrAbilityFilter && {
+            const nextState = {
+                ...state,
+                settings: { ...state.settings, ...update },
+                raid: { ...state.raid, entryIndex: 0 },
+                ...(shouldResetGenderOrAbilityFilter && {
+                    filters: {
+                        ...state.filters,
+                        gender: undefined,
+                        ability: undefined,
+                    },
+                }),
+            }
+
+            setState(nextState)
+            settings.saveSettings(nextState.settings)
+            filter.saveFilters(nextState.filters)
+        },
+        [state],
+    )
+
+    const updateRaid = React.useCallback(
+        (update: Partial<RaidData>) => {
+            const nextState = {
+                ...state,
+                raid: { ...state.raid, ...update },
+                // Since the new mon may have different gender lock, reset the gender filter.
                 filters: {
                     ...state.filters,
                     gender: undefined,
                     ability: undefined,
                 },
-            }),
-        }
+            }
+            setState(nextState)
+            filter.saveFilters(nextState.filters)
+            den.saveRaid(nextState.raid)
+        },
+        [state],
+    )
 
-        setState(nextState)
-    }
-
-    const updateRaid = React.useCallback((update: Partial<RaidData>) => {
-        setState(state => ({
-            ...state,
-            raid: { ...state.raid, ...update },
-            // Since the new mon may have different gender lock, reset the gender filter.
-            filters: {
-                ...state.filters,
-                gender: undefined,
-                ability: undefined,
-            },
-        }))
-    }, [])
-
-    const updateFilters = React.useCallback((update: Partial<Filters>) => {
-        setState(state => ({
-            ...state,
-            filters: { ...state.filters, ...update },
-        }))
-    }, [])
+    const updateFilters = React.useCallback(
+        (update: Partial<Filters>) => {
+            const nextState = {
+                ...state,
+                filters: { ...state.filters, ...update },
+            }
+            setState(nextState)
+            filter.saveFilters(nextState.filters)
+        },
+        [state],
+    )
 
     const handleDenPreviewChange = (index: number) => {
         updateRaid({ entryIndex: index })

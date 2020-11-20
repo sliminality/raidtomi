@@ -19,9 +19,19 @@ export type Settings = {
     badgeLevel: BadgeLevel
 }
 
+const LOCAL_SETTINGS_KEY = "settings"
+
 export function createDefaultSettings(): Settings {
+    const serializedSettings = localStorage.getItem(LOCAL_SETTINGS_KEY)
+    if (serializedSettings) {
+        return JSON.parse(serializedSettings)
+    }
     return {
         gameTitle: GameTitle.Sword,
         badgeLevel: BadgeLevel.Adult,
     }
+}
+
+export function saveSettings(settings: Settings): void {
+    localStorage.setItem(LOCAL_SETTINGS_KEY, JSON.stringify(settings))
 }

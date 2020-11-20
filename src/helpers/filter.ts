@@ -34,25 +34,33 @@ export type Filters = {
     gender: GenderFilter | undefined
 }
 
+const LOCAL_FILTER_KEY = "filter"
+
 export function createDefaultFilters(): Filters {
+    const serializedFilters = localStorage.getItem(LOCAL_FILTER_KEY)
+    if (serializedFilters) {
+        const parsed = JSON.parse(serializedFilters)
+
+        // Fix nulls.
+        return {
+            shiny: parsed.shiny === null ? undefined : parsed.shiny,
+            iv: parsed.iv.map((iv: SingleIVFilterData | null) =>
+                iv === null ? undefined : iv,
+            ),
+            ability: parsed.ability === null ? undefined : parsed.ability,
+            gender: parsed.gender === null ? undefined : parsed.gender,
+        }
+    }
     return {
-        shiny: crate.ShinyFilter.Square,
-        iv: [
-            undefined,
-            undefined,
-            // e.g. 0 attack:
-            // {
-            //     judgment: crate.IVJudgment.NoGood,
-            //     direction: crate.RangeDirection.AtMost,
-            // },
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-        ],
+        shiny: crate.ShinyFilter.Shiny,
+        iv: [undefined, undefined, undefined, undefined, undefined, undefined],
         ability: undefined,
         gender: undefined,
     }
+}
+
+export function saveFilters(filters: Filters): void {
+    localStorage.setItem(LOCAL_FILTER_KEY, JSON.stringify(filters))
 }
 
 const createSingleIVFilter = (

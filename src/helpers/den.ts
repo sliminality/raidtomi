@@ -14,13 +14,6 @@ export type RaidData = {
     entryIndex: number
 }
 
-export function createDefaultRaid(): RaidData {
-    return {
-        den: 166, // First CT den.
-        entryIndex: 0,
-    }
-}
-
 export type DenEncounter = {
     species: number // National Dex number.
     altForm: number // Index of alt form. 0 is base form.
@@ -55,6 +48,23 @@ export const enum GenderPool {
 //=============================================================================
 // Constructors.
 //=============================================================================
+
+const LOCAL_RAID_KEY = "raid"
+
+export function createDefaultRaid(): RaidData {
+    const serializedRaid = localStorage.getItem(LOCAL_RAID_KEY)
+    if (serializedRaid) {
+        return JSON.parse(serializedRaid)
+    }
+    return {
+        den: 166, // First CT den.
+        entryIndex: 0,
+    }
+}
+
+export function saveRaid(raid: RaidData): void {
+    localStorage.setItem(LOCAL_RAID_KEY, JSON.stringify(raid))
+}
 
 export function createRaid(encounter: DenEncounter): Raid {
     return new crate.Raid(
