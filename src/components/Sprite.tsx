@@ -13,7 +13,7 @@ type SpritePropsBySpecies = {
 
     // Is the icon decorative or does it stand alone?
     isStandalone: boolean
-    style?: React.CSSProperties
+    className?: string
 }
 
 type SpritePropsBySlug =
@@ -23,7 +23,7 @@ type SpritePropsBySlug =
           slug: Slug
           female?: undefined
           isStandalone: boolean
-          style?: React.CSSProperties
+          className?: string
       }
     | {
           // Female sprites.
@@ -32,7 +32,7 @@ type SpritePropsBySlug =
           slug: FemaleSlug
           female?: true
           isStandalone: boolean
-          style?: React.CSSProperties
+          className?: string
       }
 
 type SpriteProps = SpritePropsBySpecies | SpritePropsBySlug
@@ -46,7 +46,10 @@ export function Sprite(props: SpriteProps): JSX.Element {
     }`.trim()
 
     const icon = (
-        <span className={className} aria-hidden={true} style={props.style} />
+        <span
+            className={[props.className, className].join(" ")}
+            aria-hidden={true}
+        />
     )
 
     // If icon is standalone, include screen-reader text.

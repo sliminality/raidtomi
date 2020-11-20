@@ -2,6 +2,7 @@
  * Den and mon selection.
  */
 import * as React from "react"
+import { StyleSheet, css } from "aphrodite/no-important"
 import * as den from "../helpers/den"
 import { dens } from "../helpers/data/dens"
 import { Sprite } from "./Sprite"
@@ -60,7 +61,7 @@ function DenPicker({ value, onChange }: DenPickerProps) {
     }
 
     return (
-        <label style={styles.label}>
+        <label className={css(styles.label)}>
             Den
             <input
                 type="number"
@@ -90,17 +91,17 @@ export function DenPreview({
     // TODO: Handle female sprites.
     // TODO: Handle form sprites.
     return (
-        <ul style={styles.denPreviewList}>
+        <ul className={css(styles.denPreviewList)}>
             {encounters.map((entry, i) => {
-                const style = {
-                    ...styles.denPreviewListEntry,
-                    ...(i === hoveredIndex && styles.denPreviewListEntryHover),
-                    ...(i === value && styles.denPreviewListEntryActive),
-                }
                 return (
                     <li key={i}>
                         <button
-                            style={style}
+                            className={css(
+                                styles.denPreviewListEntry,
+                                i === hoveredIndex &&
+                                    styles.denPreviewListEntryHover,
+                                i === value && styles.denPreviewListEntryActive,
+                            )}
                             onClick={() => onChange(i)}
                             onMouseEnter={() => setHoveredIndex(i)}
                             onMouseLeave={resetHoveredIndex}
@@ -109,9 +110,12 @@ export function DenPreview({
                                 type="species"
                                 species={entry.species}
                                 isStandalone={false}
-                                style={styles.denPreviewSprite}
+                                className={css(styles.denPreviewSprite)}
                             />
                             {den.formatEntry(entry)}
+                            <span
+                                className={css(styles.minFlawlessIVs)}
+                            >{`${entry.minFlawlessIVs}IV+`}</span>
                         </button>
                     </li>
                 )
@@ -144,10 +148,10 @@ export function RaidForm({
     }
 
     return (
-        <div style={styles.wrapper}>
-            <div style={styles.form}>
+        <div className={css(styles.wrapper)}>
+            <div className={css(styles.form)}>
                 <DenPicker value={value.den} onChange={handleDenChange} />
-                <label style={styles.label}>
+                <label className={css(styles.label)}>
                     Encounter
                     <select
                         name="encounter"
@@ -171,7 +175,7 @@ export function RaidForm({
     )
 }
 
-const styles = {
+const styles = StyleSheet.create({
     wrapper: {
         display: "flex",
         alignItems: "flex-start",
@@ -218,4 +222,9 @@ const styles = {
     denPreviewSprite: {
         marginBottom: 8,
     },
-}
+    minFlawlessIVs: {
+        color: "var(--light-text-color)",
+        fontSize: 12,
+        marginTop: 4,
+    },
+})
