@@ -94,7 +94,7 @@ export function createFrame(skips: number, frame: Frame): FrameResult {
 
 export function formatAbility(
     ability: Ability,
-    short: boolean = false
+    short: boolean = false,
 ): string {
     switch (ability) {
         case crate.Ability.First:

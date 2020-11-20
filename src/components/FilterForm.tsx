@@ -7,6 +7,7 @@ import crate from "../../crate/Cargo.toml"
 import * as den from "../helpers/den"
 import * as ability from "../helpers/ability"
 import { Switcher } from "./Switcher"
+import { IVFilter } from "./IVFilter"
 
 import type { AbilityFilter, ShinyFilter } from "../../crate/pkg/raidtomi"
 import type { AbilityName } from "../helpers/ability"
@@ -321,6 +322,10 @@ export function FilterForm({
                 genderPool={currentGenderPool}
                 onChange={gender => updateValue({ gender })}
             />
+            <IVFilter
+                value={value.iv}
+                onChange={ivs => updateValue({ iv: ivs })}
+            />
         </div>
     )
 }
@@ -328,6 +333,7 @@ export function FilterForm({
 const styles = StyleSheet.create({
     filterWrapper: {
         display: "flex",
+        flexWrap: "wrap",
     },
     radioLabel: {
         display: "flex",
