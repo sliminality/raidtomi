@@ -68,14 +68,22 @@ export function saveRaid(raid: RaidData): void {
 }
 
 export function createDefaultSeed(): BigInt {
+    const defaultSeed = BigInt("0xbb810e6006a2a035")
     const serializedSeed = localStorage.getItem(LOCAL_SEED_KEY)
     if (serializedSeed) {
-        return BigInt(`0x${JSON.parse(serializedSeed)}`)
+        let parsed: BigInt
+        try {
+            parsed = BigInt(`0x${serializedSeed}`)
+        } catch (error) {
+            parsed = defaultSeed
+        }
+        return parsed
     }
-    return BigInt("0xbb810e6006a2a035")
+    return defaultSeed
 }
 
 export function saveSeed(seed: BigInt): void {
+    console.log(seed.toString(16))
     localStorage.setItem(LOCAL_SEED_KEY, seed.toString(16))
 }
 
