@@ -32,6 +32,17 @@ export function createDefaultState(): State {
     }
 }
 
+const submitErrorReason = {
+    invalidIVFilters: {
+        type: "invalid_iv_filters" as const,
+        message: "Too many imperfect IV filters.",
+    },
+    noEncounterSelected: {
+        type: "no_encounter_selected" as const,
+        message: "Please select a mon.",
+    },
+}
+
 export function App(): JSX.Element {
     /**
      * State and lifecycle.
@@ -52,6 +63,29 @@ export function App(): JSX.Element {
         () => den.getGenderPoolForEncounter(currentEncounter),
         [currentEncounter],
     )
+
+    // Disable submission if filters are invalid for the chosen raid.
+    const submitError = React.useMemo(() => {
+        if (!currentEncounter) {
+            return submitErrorReason.noEncounterSelected
+        }
+
+        // Check IVs filtered to be imperfect.
+        // e.g. if the raid has 4 guaranteed IVs, the user can constrain
+        // at most 2 IVs to be less than perfect.
+        const maxImperfectIVs =
+            state.filters.iv.length - currentEncounter.minFlawlessIVs
+        const numFilteredImperfectIVs = state.filters.iv.filter(
+            iv =>
+                iv &&
+                iv.direction === crate.RangeDirection.AtMost &&
+                iv.judgment !== crate.IVJudgment.Best,
+        ).length
+
+        if (numFilteredImperfectIVs > maxImperfectIVs) {
+            return submitErrorReason.invalidIVFilters
+        }
+    }, [currentEncounter, state.filters.iv])
 
     /**
      * Helpers.
@@ -139,9 +173,16 @@ export function App(): JSX.Element {
             />
             <div className={css(styles.seedSubmit)}>
                 <Seed value={seed} updateValue={setSeed} />
-                <Button type="submit" onClick={handleSearch}>
+                <Button
+                    type="submit"
+                    onClick={handleSearch}
+                    disabled={!!submitError}
+                >
                     Search
                 </Button>
+                <span className={css(styles.submitError)}>
+                    {submitError && submitError.message}
+                </span>
             </div>
             <Results result={result} currentEncounter={currentEncounter} />
             <Footer />
@@ -154,9 +195,12 @@ const styles = StyleSheet.create({
         padding: 12,
     },
     seedSubmit: {
-        marginTop: 12,
+        marginTop: 16,
         marginBottom: 12,
         display: "flex",
         alignItems: "center",
+    },
+    submitError: {
+        color: "var(--red)",
     },
 })
