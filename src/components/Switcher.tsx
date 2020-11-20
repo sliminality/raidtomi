@@ -11,6 +11,7 @@ export type SwitcherItem<T extends { toString: () => string }> = {
 
 export type SwitcherProps<T extends { toString: () => string }> =
     | {
+          title: React.ReactNode
           groupName: string
           items: Array<SwitcherItem<T>>
           value: T | undefined
@@ -20,6 +21,7 @@ export type SwitcherProps<T extends { toString: () => string }> =
           allowDeselect: true
       }
     | {
+          title: React.ReactNode
           groupName: string
           items: Array<SwitcherItem<T>>
           value: T
@@ -33,12 +35,16 @@ export function Switcher<T extends { toString: () => string }>(
     // There's a crazy eslint bug where using the identifier `props` causes
     // props validation to fail, so in the meantime use `propz`.
     // https://github.com/yannickcr/eslint-plugin-react/issues/2654
-    prop$: SwitcherProps<T>
+    prop$: SwitcherProps<T>,
 ): JSX.Element {
-    const { items, value, renderItemTitle, getItemAriaLabel, groupName } = prop$
-    // const [hovered, setHovered] = React.useState<string | undefined>(
-    //     initialValueId
-    // )
+    const {
+        items,
+        value,
+        renderItemTitle,
+        getItemAriaLabel,
+        groupName,
+        title,
+    } = prop$
     const handleClick = (item: T) => () => {
         // If item is currently selected, check if deselection is allowed and
         // reset the current selection if so.
@@ -73,7 +79,7 @@ export function Switcher<T extends { toString: () => string }>(
 
     return (
         <fieldset className={css(styles.fieldset)}>
-            <legend>Gender</legend>
+            <legend>{title}</legend>
             {items.map(renderItem)}
         </fieldset>
     )
@@ -117,13 +123,14 @@ const styles = StyleSheet.create({
         },
     },
     itemLabel: {
-        padding: 8,
+        padding: 6,
         display: "inline-flex",
         cursor: "pointer",
         color: "var(--dark-text-color)",
         borderTop: "1px solid var(--dark-text-color)",
         borderBottom: "1px solid var(--dark-text-color)",
         borderLeft: "1px solid var(--dark-text-color)",
+        fontSize: 14,
     },
     itemPressed: {
         background: "rgba(0, 0, 255, 0.5)",

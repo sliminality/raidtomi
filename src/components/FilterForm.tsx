@@ -264,6 +264,7 @@ function GenderFilterForm({
 
     return (
         <Switcher<GenderPool>
+            title="Gender"
             groupName="filter-gender"
             allowDeselect={true}
             value={switcherValue}
