@@ -34,10 +34,15 @@ input {
     --input-border-error: 0 0 0 2px rgba(var(--red-base), 0.8) inset;
 }
 
+label,
 input,
 button {
-    --button-disabled: rgba(var(--blue-base), 0.5);
     --button-outline: 0 0 0 1px rgba(var(--dark-blue-base), 1);
+
+    --button-switcher-outline: 0 0 0 1px var(--medium-divider-color);
+    --button-switcher-disabled-outline: 0 0 0 1px var(--light-divider-color);
+
+    --button-disabled: rgba(var(--blue-base), 0.5);
     --button-disabled-outline: 0 0 0 1px rgba(var(--dark-blue-base), 0.5);
 }
 

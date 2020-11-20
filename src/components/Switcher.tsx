@@ -96,7 +96,6 @@ const styles = StyleSheet.create({
             borderBottomLeftRadius: 4,
         },
         ":last-of-type > label": {
-            borderRight: "1px solid black",
             borderTopRightRadius: 4,
             borderBottomRightRadius: 4,
         },
@@ -108,18 +107,18 @@ const styles = StyleSheet.create({
         height: 1,
         width: 1,
 
-        ":focus + label": {
-            boxShadow: "var(--focus-ring)",
-        },
         ":disabled + label": {
             color: "var(--light-text-color)",
-            borderColor: "var(--light-divider-color)",
+            boxShadow: "var(--button-switcher-disabled-outline)",
             cursor: "not-allowed",
         },
         ":checked + label": {
             color: "white",
-            borderColor: "var(--blue)",
             background: "var(--blue)",
+            boxShadow: "var(--button-outline)",
+        },
+        ":focus + label": {
+            boxShadow: "var(--focus-ring)",
         },
     },
     itemLabel: {
@@ -127,9 +126,8 @@ const styles = StyleSheet.create({
         display: "inline-flex",
         cursor: "pointer",
         color: "var(--dark-text-color)",
-        borderTop: "1px solid var(--dark-text-color)",
-        borderBottom: "1px solid var(--dark-text-color)",
-        borderLeft: "1px solid var(--dark-text-color)",
+        boxShadow: "var(--button-switcher-outline)",
+        marginRight: 1,
         fontSize: 14,
     },
     itemPressed: {
