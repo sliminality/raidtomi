@@ -7,6 +7,7 @@ import * as filter from "../helpers/filter"
 import * as frame from "../helpers/frame"
 import * as settings from "../helpers/settings"
 import { Button } from "./Button"
+import { DenPreview } from "./DenPreview"
 import { FilterForm } from "./FilterForm"
 import { Footer } from "./Footer"
 import { Results } from "./Results"
@@ -62,6 +63,12 @@ export function App(): JSX.Element {
     const genderPool = React.useMemo(
         () => den.getGenderPoolForEncounter(currentEncounter),
         [currentEncounter],
+    )
+
+    // List of possible mon encounters for the current den.
+    const encounters = React.useMemo(
+        () => den.getEntriesForSettings(state.settings)(state.raid.den) || [],
+        [state.raid.den, state.settings],
     )
 
     // Disable submission if filters are invalid for the chosen raid.
@@ -134,6 +141,10 @@ export function App(): JSX.Element {
         }))
     }, [])
 
+    const handleDenPreviewChange = (index: number) => {
+        updateRaid({ entryIndex: index })
+    }
+
     function handleSearch() {
         if (!currentEncounter) {
             return
@@ -159,11 +170,21 @@ export function App(): JSX.Element {
      */
     return (
         <div className={css(styles.appWrapper)}>
-            <SettingsForm value={state.settings} updateValue={updateSettings} />
-            <RaidForm
-                value={state.raid}
-                settings={state.settings}
-                updateValue={updateRaid}
+            <header className={css(styles.header)}>
+                <SettingsForm
+                    value={state.settings}
+                    updateValue={updateSettings}
+                />
+                <RaidForm
+                    value={state.raid}
+                    encounters={encounters}
+                    updateValue={updateRaid}
+                />
+            </header>
+            <DenPreview
+                value={state.raid.entryIndex}
+                encounters={encounters}
+                onChange={handleDenPreviewChange}
             />
             <FilterForm
                 value={state.filters}
@@ -193,6 +214,17 @@ export function App(): JSX.Element {
 const styles = StyleSheet.create({
     appWrapper: {
         padding: 12,
+        display: "flex",
+        flexDirection: "column",
+        maxWidth: 800,
+        margin: "0 auto",
+    },
+    header: {
+        "@media(min-width: 600px)": {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+        },
     },
     seedSubmit: {
         marginTop: 16,
