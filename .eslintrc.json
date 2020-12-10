@@ -20,6 +20,7 @@
     },
     "plugins": ["react", "@typescript-eslint"],
     "rules": {
-        "react/display-name": "off"
+        "react/display-name": "off",
+        "@typescript-eslint/no-inferrable-types": "off"
     }
 }
