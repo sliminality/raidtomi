@@ -5,6 +5,7 @@ import crate from "../../crate/Cargo.toml"
 import * as den from "../helpers/den"
 import * as filter from "../helpers/filter"
 import * as frame from "../helpers/frame"
+import * as seedHelpers from "../helpers/seed"
 import * as settings from "../helpers/settings"
 import { Button } from "./Button"
 import { DenPreview } from "./DenPreview"
@@ -50,7 +51,7 @@ export function App(): JSX.Element {
      */
     const [state, setState] = React.useState<State>(createDefaultState())
     const [seed, setSeed] = React.useState<BigInt | undefined>(
-        den.createDefaultSeed(),
+        seedHelpers.createDefaultSeed(),
     )
     const [result, setResult] = React.useState<
         frame.FrameResult | null | undefined
@@ -161,9 +162,9 @@ export function App(): JSX.Element {
     const updateSeed = React.useCallback((update: BigInt | undefined) => {
         setSeed(update)
         if (update === undefined) {
-            den.clearSavedSeed()
+            seedHelpers.clearSavedSeed()
         } else {
-            den.saveSeed(update)
+            seedHelpers.saveSeed(update)
         }
     }, [])
 
