@@ -80,14 +80,29 @@ function SingleIVFilter({
             if (direction === ANY) {
                 onChange(undefined)
                 return
+            } else if (direction === crate.RangeDirection.AtMost) {
+                onChange({
+                    direction,
+                    // If setting to At Most, default to No Good.
+                    judgment:
+                        value === undefined
+                            ? crate.IVJudgment.NoGood
+                            : value.judgment,
+                })
+                return
+            } else if (direction === crate.RangeDirection.AtLeast) {
+                onChange({
+                    direction,
+                    // If setting to At Least, default to Best.
+                    judgment:
+                        value === undefined
+                            ? crate.IVJudgment.Best
+                            : value.judgment,
+                })
+                return
+            } else {
+                return unreachable()
             }
-            onChange({
-                direction,
-                judgment:
-                    value === undefined
-                        ? crate.IVJudgment.Best
-                        : value.judgment,
-            })
         },
         [onChange, value],
     )
