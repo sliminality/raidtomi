@@ -27,6 +27,7 @@ export function Seed({ value, updateValue }: SeedProps): JSX.Element {
         const text = e.currentTarget.value
         if (text === "") {
             updateValue(undefined)
+            setInvalidState(undefined)
             return
         }
 
@@ -64,7 +65,6 @@ export function Seed({ value, updateValue }: SeedProps): JSX.Element {
                     pattern="[0-9a-fA-F]{16}"
                     size={16}
                 />
-                {invalidState && invalidState.message}
             </label>
         </div>
     )
