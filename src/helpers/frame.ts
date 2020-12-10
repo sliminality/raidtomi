@@ -23,7 +23,7 @@ export interface FrameResult {
 export function createFrame(skips: number, frame: Frame): FrameResult {
     return {
         skips,
-        seed: seedHelpers.formatSeed(frame.get_seed()),
+        seed: seedHelpers.convert.instance.toString(frame.get_seed()),
         ability: [
             crate.Ability.First,
             crate.Ability.Second,

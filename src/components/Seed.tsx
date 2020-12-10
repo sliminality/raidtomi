@@ -3,15 +3,18 @@
  */
 import * as React from "react"
 
+import * as seedHelpers from "../helpers/seed"
+
 type SeedProps = {
     value: BigInt | undefined
     updateValue: (update: BigInt | undefined) => void
 }
 
 export function Seed({ value, updateValue }: SeedProps): JSX.Element {
-    const valueAsHex = React.useMemo(() => (value ? value.toString(16) : ""), [
-        value,
-    ])
+    const valueAsHex = React.useMemo(
+        () => (value ? seedHelpers.convert.bigInt.toString(value) : ""),
+        [value],
+    )
     const [invalidState, setInvalidState] = React.useState<
         | {
               temporaryValue: string
@@ -29,12 +32,12 @@ export function Seed({ value, updateValue }: SeedProps): JSX.Element {
 
         let bigInt
         try {
-            bigInt = BigInt(`0x${text}`)
+            bigInt = seedHelpers.convert.string.toBigInt(text)
         } catch (error) {
             setInvalidState({ temporaryValue: text, message: "Invalid seed" })
             return
         }
-        if (bigInt > BigInt("0xFFFFFFFFFFFFFFFF")) {
+        if (bigInt > seedHelpers.MAX_VALID_SEED) {
             setInvalidState({ temporaryValue: text, message: "Invalid seed" })
             return
         }

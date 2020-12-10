@@ -1,4 +1,8 @@
+import crate from "../../crate/Cargo.toml"
+
 import type { Seed } from "../../crate/pkg/raidtomi"
+
+export const MAX_VALID_SEED = BigInt("0xFFFFFFFFFFFFFFFF")
 
 const LOCAL_SEED_KEY = "seed"
 
@@ -8,7 +12,7 @@ export function createDefaultSeed(): BigInt {
     if (serializedSeed) {
         let parsed: BigInt
         try {
-            parsed = BigInt(`0x${serializedSeed}`)
+            parsed = convert.string.toBigInt(serializedSeed)
         } catch (error) {
             parsed = defaultSeed
         }
@@ -18,26 +22,44 @@ export function createDefaultSeed(): BigInt {
 }
 
 export function saveSeed(seed: BigInt): void {
-    console.log(seed.toString(16))
-    localStorage.setItem(LOCAL_SEED_KEY, seed.toString(16))
+    localStorage.setItem(LOCAL_SEED_KEY, convert.bigInt.toString(seed))
 }
 
 export function clearSavedSeed(): void {
     localStorage.removeItem(LOCAL_SEED_KEY)
 }
 
-/**
- * Reassemble a Seed object into a 64-bit BigInt.
- *
- * wasm-opt has trouble optimizing u64 types, so we can't expose a u64 directly
- * from Rust. In order to pass seeds across the boundary, we store them as two
- * u32 values, and put them back together in JavaScript.
- */
-function unpackSeed(seed: Seed): BigInt {
-    // Left-shift the first 32 bits to make room to add the next 32 bits.
-    return (BigInt(seed[0]) << BigInt(32)) + BigInt(seed[1])
-}
-
-export function formatSeed(seed: Seed): string {
-    return unpackSeed(seed).toString(16)
+export const convert = {
+    string: {
+        toBigInt: (value: string): BigInt => {
+            return BigInt(`0x${value}`)
+        },
+        toInstance: (value: string): Seed => {
+            return crate.Seed.from_u64(convert.string.toBigInt(value))
+        },
+    },
+    bigInt: {
+        toString: (value: BigInt): string => {
+            return value.toString(16)
+        },
+        toInstance: (value: BigInt): Seed => {
+            return crate.Seed.from_u64(value)
+        },
+    },
+    instance: {
+        toString: (value: Seed): string => {
+            return convert.bigInt.toString(convert.instance.toBigInt(value))
+        },
+        /**
+         * Reassemble a Seed object into a 64-bit BigInt.
+         *
+         * wasm-opt has trouble optimizing u64 types, so we can't expose a u64 directly
+         * from Rust. In order to pass seeds across the boundary, we store them as two
+         * u32 values, and put them back together in JavaScript.
+         */
+        toBigInt: (value: Seed): BigInt => {
+            // Left-shift the first 32 bits to make room to add the next 32 bits.
+            return (BigInt(value[0]) << BigInt(32)) + BigInt(value[1])
+        },
+    },
 }
