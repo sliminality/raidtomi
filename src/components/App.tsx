@@ -223,6 +223,7 @@ export function App(): JSX.Element {
                 <Seed value={seed} updateValue={updateSeed} />
                 <Button
                     type="submit"
+                    style="primary"
                     onClick={handleSearch}
                     disabled={!!submitError}
                 >

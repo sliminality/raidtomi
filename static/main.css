@@ -14,6 +14,7 @@
     --blue: rgba(var(--blue-base), 1);
 
     --dark-blue-base: 45, 130, 175;
+    --dark-blue: rgba(var(--dark-blue-base), 1);
 
     --light-divider-color: rgba(var(--dark-base), 0.1);
     --medium-divider-color: rgba(var(--dark-base), 0.3);
@@ -55,6 +56,11 @@ body {
 a {
     text-decoration: none;
     color: var(--blue);
+}
+
+a:hover {
+    text-decoration: none;
+    color: var(--dark-blue);
 }
 
 fieldset {
