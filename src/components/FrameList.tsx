@@ -1,5 +1,5 @@
 /**
- * Search results.
+ * List of frames matching the query.
  */
 import * as React from "react"
 import { StyleSheet, css } from "aphrodite/no-important"
@@ -8,20 +8,20 @@ import * as ability from "../helpers/ability"
 import * as den from "../helpers/den"
 import * as frame from "../helpers/frame"
 
-type ResultsProps = {
+type FrameListProps = {
     result: frame.FrameResult | null | undefined
     currentEncounter: den.DenEncounter | undefined
 }
 
-type ResultRowProps = {
+type FrameListItemProps = {
     result: frame.FrameResult | undefined
     currentEncounter: den.DenEncounter | undefined
 }
 
-export function Results({
+export function FrameList({
     result,
     currentEncounter,
-}: ResultsProps): JSX.Element {
+}: FrameListProps): JSX.Element {
     if (result === null) {
         return <span>No result found within 10 million frames.</span>
     }
@@ -47,7 +47,7 @@ export function Results({
     )
 }
 
-function renderRow({ result, currentEncounter }: ResultRowProps) {
+function renderRow({ result, currentEncounter }: FrameListItemProps) {
     // TODO: This is incoherent, model state as discriminated union.
     if (!result || !currentEncounter) {
         return

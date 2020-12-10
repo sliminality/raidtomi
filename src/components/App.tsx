@@ -10,7 +10,7 @@ import { Button } from "./Button"
 import { DenPreview } from "./DenPreview"
 import { FilterForm } from "./FilterForm"
 import { Footer } from "./Footer"
-import { Results } from "./Results"
+import { FrameList } from "./FrameList"
 import { RaidForm } from "./RaidForm"
 import { Seed } from "./Seed"
 import { SettingsForm } from "./SettingsForm"
@@ -231,7 +231,7 @@ export function App(): JSX.Element {
                     {submitError && submitError.message}
                 </span>
             </div>
-            <Results result={result} currentEncounter={currentEncounter} />
+            <FrameList result={result} currentEncounter={currentEncounter} />
             <Footer />
         </div>
     )
