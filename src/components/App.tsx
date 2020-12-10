@@ -233,7 +233,11 @@ export function App(): JSX.Element {
                     {submitError && submitError.message}
                 </span>
             </div>
-            <FrameList result={result} currentEncounter={currentEncounter} />
+            <FrameList
+                result={result}
+                currentEncounter={currentEncounter}
+                updateSeed={updateSeed}
+            />
             <Footer />
         </div>
     )

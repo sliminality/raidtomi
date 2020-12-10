@@ -11,16 +11,19 @@ import * as frame from "../helpers/frame"
 type FrameListProps = {
     result: frame.FrameResult | null | undefined
     currentEncounter: den.DenEncounter | undefined
+    updateSeed: (update: BigInt | undefined) => void
 }
 
 type FrameListItemProps = {
     result: frame.FrameResult | undefined
     currentEncounter: den.DenEncounter | undefined
+    updateSeed: (update: BigInt | undefined) => void
 }
 
 export function FrameList({
     result,
     currentEncounter,
+    updateSeed,
 }: FrameListProps): JSX.Element {
     if (result === null) {
         return <span>No result found within 10 million frames.</span>
@@ -40,7 +43,8 @@ export function FrameList({
                     </tr>
                 </thead>
                 <tbody>
-                    {result && renderRow({ result, currentEncounter })}
+                    {result &&
+                        renderRow({ result, currentEncounter, updateSeed })}
                 </tbody>
             </table>
         </section>
