@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
         width: 92,
         marginBottom: 8,
         marginRight: 8,
+        cursor: "pointer",
     },
     denPreviewListEntryActive: {
         background: "var(--light-blue)",
