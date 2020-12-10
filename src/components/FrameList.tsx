@@ -9,13 +9,13 @@ import * as den from "../helpers/den"
 import * as frame from "../helpers/frame"
 
 type FrameListProps = {
-    result: frame.FrameResult | null | undefined
+    result: Result<frame.FrameResult, undefined> | undefined
     currentEncounter: den.DenEncounter | undefined
     updateSeed: (update: BigInt | undefined) => void
 }
 
 type FrameListItemProps = {
-    result: frame.FrameResult | undefined
+    result: frame.FrameResult
     currentEncounter: den.DenEncounter | undefined
     updateSeed: (update: BigInt | undefined) => void
 }
@@ -25,7 +25,7 @@ export function FrameList({
     currentEncounter,
     updateSeed,
 }: FrameListProps): JSX.Element {
-    if (result === null) {
+    if (result && result.type === "err") {
         return <span>No result found within 10 million frames.</span>
     }
     return (
@@ -44,7 +44,11 @@ export function FrameList({
                 </thead>
                 <tbody>
                     {result &&
-                        renderRow({ result, currentEncounter, updateSeed })}
+                        renderRow({
+                            result: result.value,
+                            currentEncounter,
+                            updateSeed,
+                        })}
                 </tbody>
             </table>
         </section>
@@ -53,7 +57,7 @@ export function FrameList({
 
 function renderRow({ result, currentEncounter }: FrameListItemProps) {
     // TODO: This is incoherent, model state as discriminated union.
-    if (!result || !currentEncounter) {
+    if (!currentEncounter) {
         return
     }
 

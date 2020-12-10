@@ -16,3 +16,5 @@ declare type Values<T extends unknown> = {
 }[keyof T]
 
 declare function unreachable(): never
+
+declare type Result<T, E> = { type: "ok"; value: T } | { type: "err"; error: E }

@@ -54,7 +54,7 @@ export function App(): JSX.Element {
         seedHelpers.createDefaultSeed(),
     )
     const [result, setResult] = React.useState<
-        frame.FrameResult | null | undefined
+        Result<frame.FrameResult, undefined> | undefined
     >()
 
     const currentEncounter = React.useMemo(
@@ -186,10 +186,13 @@ export function App(): JSX.Element {
             filter.createFilter(state.filters),
         )
         if (!result) {
-            setResult(null)
+            setResult({ type: "err", error: undefined })
             return
         }
-        setResult(frame.createFrame(result[0], result[1]))
+        setResult({
+            type: "ok",
+            value: frame.createFrame(result[0], result[1]),
+        })
     }
 
     /**
