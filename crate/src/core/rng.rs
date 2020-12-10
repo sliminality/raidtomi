@@ -5,23 +5,31 @@ use std::num::Wrapping as w;
 
 /// Keeps track of the state.
 #[derive(PartialEq, Eq, Debug)]
-pub struct Rng([u64; 2]);
+pub struct Rng(u64, u64);
 
 /// Second half of the initial state is always this constant.
 pub static MAGIC_SEED: u64 = 0x82a2b175229d6a5b;
 
+/// Left rotation.
+#[inline]
+fn rotl(x: u64, k: u8) -> u64 {
+    (x << k) | (x >> (64 - k))
+}
+
 impl Rng {
     /// Creates a new RNG instance with the given seed.
     pub fn new(seed: u64) -> Self {
-        Rng([seed, MAGIC_SEED])
+        Rng(seed, MAGIC_SEED)
     }
 
     /// Reset generator with a new seed.
     pub fn reset(&mut self, seed: u64) {
-        self.0 = [seed, MAGIC_SEED]
+        self.0 = seed;
+        self.1 = MAGIC_SEED;
     }
 
     /// Returns a random 64-bit value, masked, less than the desired maximum.
+    #[inline]
     pub fn next_int_max(&mut self, max: u32, mask: u32) -> u32 {
         // Mod the result by the mask until the result is small enough.
         let mut result = self.next_int(mask);
@@ -32,19 +40,21 @@ impl Rng {
     }
 
     /// Returns a random 32-bit value, masked.
+    #[inline]
     pub fn next_int(&mut self, mask: u32) -> u32 {
-        Rng::next(&mut self.0) as u32 & mask
+        self.next() as u32 & mask
     }
 
     /// Advance the RNG according to the current state.
-    fn next(s: &mut [u64; 2]) -> u64 {
-        let s0 = w(s[0]);
-        let mut s1 = w(s[1]);
+    #[inline]
+    fn next(&mut self) -> u64 {
+        let s0 = w(self.0);
+        let mut s1 = w(self.1);
         let result = s0 + s1;
 
         s1 ^= s0;
-        s[0] = (w(s0.0.rotate_left(24)) ^ s1 ^ (s1 << 16)).0;
-        s[1] = s1.0.rotate_left(37);
+        self.0 = (w(rotl(s0.0, 24)) ^ s1 ^ (s1 << 16)).0;
+        self.1 = rotl(s1.0, 37);
 
         result.0
     }
@@ -61,21 +71,23 @@ mod tests {
 
     /// Test generation of 64-bit integers.
     #[test]
-    fn test_next() {
-        assert_eq!(Rng::next(&mut [0, MAGIC_SEED]), 9413281287807789659);
-        assert_eq!(
-            Rng::next(&mut [0x2b4610ec42f20b13, MAGIC_SEED]),
-            12531479686729921902
-        );
+    fn test_next_stateless() {
+        assert_eq!(Rng::new(0).next(), 9413281287807789659);
+        assert_eq!(Rng::new(0x2b4610ec42f20b13).next(), 12531479686729921902);
+    }
+
+    /// Test that internal state is mutated correctly.
+    #[test]
+    fn test_next_stateful() {
+        let mut rng = Rng::new(0x2b4610ec42f20b13);
+        assert_eq!(rng.next(), 12531479686729921902);
+        assert_eq!(rng.next(), 0xf22b5d124ea05a84);
     }
 
     /// Test that operations handle overflow.
     #[test]
     fn test_next_overflow() {
-        assert_eq!(
-            Rng::next(&mut [0xc816c270fd1cd8fd, MAGIC_SEED]),
-            5384462261710111576
-        );
+        assert_eq!(Rng::new(0xc816c270fd1cd8fd).next(), 5384462261710111576);
     }
 
     /// Test masking.
@@ -89,7 +101,7 @@ mod tests {
         rng.reset(0xc816c270fd1cd8fd);
         assert_eq!(
             rng.next_int(0xffffffff),
-            Rng::next(&mut [0xc816c270fd1cd8fd, MAGIC_SEED]) as u32
+            Rng::new(0xc816c270fd1cd8fd).next() as u32
         );
 
         // Masking by a smaller value returns a smaller value.
