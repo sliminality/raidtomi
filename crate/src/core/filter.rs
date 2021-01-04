@@ -391,7 +391,7 @@ mod test {
     }
 
     #[test]
-    fn test_iv_test() {
+    fn test_iv_filter() {
         let iv = SingleIVFilter::new_at_least(IVJudgment::PrettyGood);
         assert!(iv.test(&11));
         assert!(iv.test(&31));
@@ -405,7 +405,7 @@ mod test {
     }
 
     #[test]
-    fn test_shiny_test() {
+    fn test_shiny_filter() {
         assert!(ShinyFilter::Shiny.test(&Shininess::Square));
         assert!(ShinyFilter::Shiny.test(&Shininess::Star));
         assert!(!ShinyFilter::Shiny.test(&Shininess::None));
@@ -416,21 +416,21 @@ mod test {
     }
 
     #[test]
-    fn test_ability_test() {
+    fn test_ability_filter() {
         assert!(AbilityFilter::First.test(&Ability::First));
         assert!(!AbilityFilter::First.test(&Ability::Second));
         assert!(!AbilityFilter::First.test(&Ability::Hidden));
     }
 
     #[test]
-    fn test_gender_test() {
+    fn test_gender_filter() {
         assert!(GenderFilter::Male.test(&Gender::Male));
         assert!(!GenderFilter::Male.test(&Gender::Female));
         assert!(!GenderFilter::Male.test(&Gender::Genderless));
     }
 
     #[test]
-    fn test_nature_test() {
+    fn test_nature_filter() {
         assert!(NatureFilter::from_vec(vec![
             Nature::Hardy.to_u32().unwrap(),
             Nature::Timid.to_u32().unwrap(),
