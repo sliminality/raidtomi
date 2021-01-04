@@ -128,6 +128,11 @@ impl FrameGenerator {
             }
         }
         let nature = self.get_nature();
+        if let Some(f) = filter.nature {
+            if !f.test(&nature) {
+                return FrameResult::Fail;
+            }
+        }
 
         FrameResult::Pass(Frame {
             seed: self.seed,

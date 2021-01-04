@@ -282,6 +282,19 @@ impl NatureFilter {
     }
 }
 
+// Non-wasm-bindgen methods.
+impl NatureFilter {
+    pub fn from_natures(vec: Vec<Nature>) -> Self {
+        let natures = vec
+            .iter()
+            .map(ToPrimitive::to_u32)
+            .collect::<Option<Vec<_>>>()
+            .expect("Some natures could not be converted to u32");
+
+        Self::from_vec(natures)
+    }
+}
+
 impl Filter<Nature> for NatureFilter {
     fn test(&self, value: &Nature) -> bool {
         // Convert nature to bit vector representation.
@@ -355,7 +368,6 @@ impl FrameFilter {
 #[cfg(test)]
 mod test {
     use super::*;
-    use num_traits::ToPrimitive;
 
     #[test]
     fn test_iv_cmp() {
@@ -431,15 +443,11 @@ mod test {
 
     #[test]
     fn test_nature_filter() {
-        assert!(NatureFilter::from_vec(vec![
-            Nature::Hardy.to_u32().unwrap(),
-            Nature::Timid.to_u32().unwrap(),
-            Nature::Relaxed.to_u32().unwrap(),
-        ])
-        .test(&Nature::Timid));
         assert!(
-            !NatureFilter::from_vec(vec![Nature::Hardy.to_u32().unwrap(),]).test(&Nature::Timid)
+            NatureFilter::from_natures(vec![Nature::Hardy, Nature::Timid, Nature::Relaxed,])
+                .test(&Nature::Timid)
         );
+        assert!(!NatureFilter::from_natures(vec![Nature::Hardy]).test(&Nature::Timid));
     }
 
     #[test]
@@ -450,13 +458,7 @@ mod test {
 
     #[test]
     fn test_valid_frame_filter() {
-        let natures = NatureFilter::from_vec(
-            vec![Nature::Timid, Nature::Bold]
-                .iter()
-                .map(ToPrimitive::to_u32)
-                .collect::<Option<Vec<_>>>()
-                .unwrap(),
-        );
+        let natures = NatureFilter::from_natures(vec![Nature::Timid, Nature::Bold]);
 
         let f = FrameFilter::new()
             .set_ability(AbilityFilter::Second)
