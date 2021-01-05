@@ -1,6 +1,7 @@
 import crate from "../../crate/Cargo.toml"
 
 import * as seedHelpers from "./seed"
+import * as natureHelpers from "./nature"
 
 import type {
     Ability,
@@ -9,6 +10,8 @@ import type {
     Nature,
     Shininess,
 } from "../../crate/pkg/raidtomi"
+
+export { formatNature } from "./nature"
 
 export interface FrameResult {
     skips: number
@@ -42,33 +45,7 @@ export function createFrame(skips: number, frame: Frame): FrameResult {
             frame.ivs[4],
             frame.ivs[5],
         ],
-        nature: [
-            crate.Nature.Hardy,
-            crate.Nature.Lonely,
-            crate.Nature.Brave,
-            crate.Nature.Adamant,
-            crate.Nature.Naughty,
-            crate.Nature.Bold,
-            crate.Nature.Docile,
-            crate.Nature.Relaxed,
-            crate.Nature.Impish,
-            crate.Nature.Lax,
-            crate.Nature.Timid,
-            crate.Nature.Hasty,
-            crate.Nature.Serious,
-            crate.Nature.Jolly,
-            crate.Nature.Naive,
-            crate.Nature.Modest,
-            crate.Nature.Mild,
-            crate.Nature.Quiet,
-            crate.Nature.Bashful,
-            crate.Nature.Rash,
-            crate.Nature.Calm,
-            crate.Nature.Gentle,
-            crate.Nature.Sassy,
-            crate.Nature.Careful,
-            crate.Nature.Quirky,
-        ][frame.nature],
+        nature: natureHelpers.natures[frame.nature],
         shiny: [
             crate.Shininess.None,
             crate.Shininess.Star,
@@ -104,36 +81,6 @@ export function formatGender(gender: Gender): string {
         default:
             return undefined as never
     }
-}
-
-export function formatNature(nature: Nature): string {
-    return [
-        "Hardy",
-        "Lonely",
-        "Brave",
-        "Adamant",
-        "Naughty",
-        "Bold",
-        "Docile",
-        "Relaxed",
-        "Impish",
-        "Lax",
-        "Timid",
-        "Hasty",
-        "Serious",
-        "Jolly",
-        "Naive",
-        "Modest",
-        "Mild",
-        "Quiet",
-        "Bashful",
-        "Rash",
-        "Calm",
-        "Gentle",
-        "Sassy",
-        "Careful",
-        "Quirky",
-    ][nature]
 }
 
 export function formatShiny(shiny: Shininess): string {
