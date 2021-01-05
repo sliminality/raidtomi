@@ -23,7 +23,7 @@
         "eslint-plugin-react": "^7.20.6",
         "parcel-bundler": "^1.12.4",
         "parcel-plugin-wasm.rs": "^1.2.16",
-        "prettier": "^2.0.5",
+        "prettier": "^2.2.1",
         "typescript": "^4.0.2"
     },
     "dependencies": {
