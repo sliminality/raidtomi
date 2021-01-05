@@ -143,7 +143,7 @@ export function formatShiny(shiny: Shininess): string {
         case crate.Shininess.Star:
             return "⭐️"
         case crate.Shininess.Square:
-            return "✴️"
+            return "▢"
         default:
             return undefined as never
     }
