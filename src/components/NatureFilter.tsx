@@ -46,7 +46,7 @@ export function NatureFilter({
                                 id={id}
                                 name="filter-nature"
                                 value={nature.toString()}
-                                checked={value && value[nature]}
+                                checked={value ? value[nature] : false}
                                 onChange={handleToggleNature(nature)}
                             />
                             <label htmlFor={id}>{formatted}</label>
