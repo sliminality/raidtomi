@@ -94,10 +94,10 @@ export function SettingsForm({
 const styles = StyleSheet.create({
     settings: {
         display: "flex",
-        marginBottom: 12,
     },
     fieldset: {
         display: "inline-flex",
+        marginRight: 4,
     },
     radioLabel: {
         lineHeight: 1.4,

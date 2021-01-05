@@ -184,7 +184,7 @@ type IVFilterProps = {
 
 export function IVFilter({ value, onChange }: IVFilterProps): JSX.Element {
     return (
-        <fieldset>
+        <fieldset className={css(styles.fieldset)}>
             <legend>IVs</legend>
             {[
                 "HP",
@@ -215,6 +215,13 @@ export function IVFilter({ value, onChange }: IVFilterProps): JSX.Element {
 }
 
 const styles = StyleSheet.create({
+    fieldset: {
+        flexBasis: "100%",
+
+        "@media (min-width: 400px)": {
+            flexBasis: "auto",
+        },
+    },
     singleIVFilter: {
         display: "flex",
         flexDirection: "column",
@@ -252,6 +259,7 @@ const styles = StyleSheet.create({
         },
     },
     rangeDirectionSwitcher: {
+        padding: 0,
         marginBottom: 8,
 
         "@media (min-width: 600px)": {

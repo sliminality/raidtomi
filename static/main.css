@@ -65,8 +65,9 @@ a:hover {
 
 fieldset {
     border: none;
-    padding: 0;
+    padding: 4;
     margin-right: 12px;
+    margin-bottom: 8px;
 }
 
 fieldset legend {
