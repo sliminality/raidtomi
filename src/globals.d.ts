@@ -18,3 +18,17 @@ declare type Values<T extends unknown> = {
 declare function unreachable(): never
 
 declare type Result<T, E> = { type: "ok"; value: T } | { type: "err"; error: E }
+
+/**
+ * Overload `map` on tuples to preserve length.
+ * https://github.com/microsoft/TypeScript/issues/5453#issuecomment-746158223
+ */
+interface Array<T> {
+    map<U>(
+        this: Array<T>,
+        callback: (value: T, index: number, array: this) => U,
+        thisArg?: this,
+    ): {
+        [index in keyof this]: U
+    }
+}

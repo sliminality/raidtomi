@@ -128,6 +128,11 @@ impl FrameGenerator {
             }
         }
         let nature = self.get_nature();
+        if let Some(f) = filter.nature {
+            if !f.test(&nature) {
+                return FrameResult::Fail;
+            }
+        }
 
         FrameResult::Pass(Frame {
             seed: self.seed,
@@ -291,7 +296,7 @@ impl Iterator for FrameGenerator {
 
 #[cfg(test)]
 mod test {
-    use super::super::filter::{IVJudgment, ShinyFilter, SingleIVFilter};
+    use super::super::filter::{IVJudgment, NatureFilter, ShinyFilter, SingleIVFilter};
     use super::*;
 
     #[test]
@@ -671,7 +676,11 @@ mod test {
                 None,
                 None,
             )
-            .set_shiny(ShinyFilter::Square);
+            .set_shiny(ShinyFilter::Square)
+            .set_nature(NatureFilter::from_natures(vec![
+                Nature::Hardy,
+                Nature::Careful,
+            ]));
 
         f.set_filter(filter);
 
@@ -687,6 +696,45 @@ mod test {
                 ability: Ability::Second,
                 gender: Gender::Male
             })
+        );
+    }
+
+    #[test]
+    // Negative example of filtering out a result.
+    fn test_search_negative() {
+        // Excadrill.
+        let mut f = FrameGenerator::new(
+            Raid::new(
+                530,   // Excadrill.
+                0,     // Alt form: N/A.
+                4,     // Guaranteed flawless IVs.
+                false, // Not G-max.
+                4,     // Random ability, HA possible.
+                0,     // Random gender.
+            ),
+            0xc816c270fd1cd8fd,
+        );
+
+        let filter = FrameFilter::new()
+            .set_ivs(
+                None,
+                Some(SingleIVFilter::new_at_most(IVJudgment::NoGood)),
+                None,
+                None,
+                None,
+                None,
+            )
+            .set_shiny(ShinyFilter::Square)
+            .set_nature(NatureFilter::from_natures(vec![Nature::Hardy]));
+
+        f.set_filter(filter);
+
+        assert_eq!(
+            f.take(100_000)
+                .find(FrameResult::is_pass)
+                .map(FrameResult::to_option)
+                .flatten(),
+            None
         );
     }
 }

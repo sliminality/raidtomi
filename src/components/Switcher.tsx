@@ -90,7 +90,7 @@ export function Switcher<T extends { toString: () => string }>(
 
 const styles = StyleSheet.create({
     fieldset: {
-        marginBottom: 8,
+        marginBottom: 12,
     },
     itemWrapper: {
         display: "inline-flex",

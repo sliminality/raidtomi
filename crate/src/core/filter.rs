@@ -1,5 +1,6 @@
 ///! Filters to apply when searching for a particular frame.
-use super::mon::{Ability, Gender, IVs, Shininess};
+use super::mon::{Ability, Gender, IVs, Nature, Shininess};
+use num_traits::ToPrimitive;
 use std::cmp::Ordering;
 use wasm_bindgen::prelude::*;
 
@@ -236,6 +237,75 @@ impl Filter<Gender> for GenderFilter {
     }
 }
 
+/// Specifies nature.
+///
+/// Nature filter is implemented as a little-endian bit vector of length 25:
+/// - `Hardy` is index 0, so its filter is `0000000000000000000000001`
+/// - `Bashful` is index 18, so the filter for "Bashful OR Hardy" is 0000001000000000000000001 There should only be one way to express "anything goes": by not passing
+/// a filter at all.
+/// - `Anything goes` is 1111111111111111111111111 There should only be one way to express "anything goes": by not passing
+/// a filter at all.
+///
+/// By default, we use 0. There should only be one way to express "anything goes": by not passing
+/// a filter at all.
+#[wasm_bindgen(inspectable)]
+#[derive(PartialEq, Eq, Debug, Copy, Clone)]
+pub struct NatureFilter(u32);
+
+// How many natures exist in total?
+const NATURE_COUNT: u32 = 25;
+
+fn nature_u32_to_bv(nature: u32) -> u32 {
+    2_u32
+        .checked_pow(nature)
+        .expect("Nature must be a u32 between 0 and 24")
+}
+
+#[wasm_bindgen]
+impl NatureFilter {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> Self {
+        // Default to disallowing ALL natures. If we wanted "anything goes",
+        // the filter should be None instead of Some(DEFAULT_FILTER).
+        Self(0)
+    }
+
+    pub fn from_vec(vec: Vec<u32>) -> Self {
+        let mut bv = 0;
+        for &nature in vec.iter() {
+            // Check if nature is between 0 and 24.
+            if nature <= NATURE_COUNT - 1 {
+                bv |= nature_u32_to_bv(nature)
+            }
+        }
+        Self(bv)
+    }
+}
+
+// Non-wasm-bindgen methods.
+impl NatureFilter {
+    pub fn from_natures(vec: Vec<Nature>) -> Self {
+        let natures = vec
+            .iter()
+            .map(ToPrimitive::to_u32)
+            .collect::<Option<Vec<_>>>()
+            .expect("Some natures could not be converted to u32");
+
+        Self::from_vec(natures)
+    }
+}
+
+impl Filter<Nature> for NatureFilter {
+    fn test(&self, value: &Nature) -> bool {
+        // Convert nature to bit vector representation.
+        if let Some(nature) = value.to_u32() {
+            nature_u32_to_bv(nature) & self.0 > 0
+        } else {
+            panic!("Cannot convert nature to u32");
+        }
+    }
+}
+
 /// Filter aspects of a frame.
 #[wasm_bindgen(inspectable)]
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
@@ -244,7 +314,7 @@ pub struct FrameFilter {
     pub ivs: Option<IVFilter>,
     pub ability: Option<AbilityFilter>,
     pub gender: Option<GenderFilter>,
-    // TODO: Add nature filter, probably using a bit vector.
+    pub nature: Option<NatureFilter>,
 }
 
 #[wasm_bindgen]
@@ -256,6 +326,7 @@ impl FrameFilter {
             ivs: None,
             ability: None,
             gender: None,
+            nature: None,
         }
     }
 
@@ -277,6 +348,7 @@ impl FrameFilter {
         *self
     }
 
+    // TODO: Use macros to deduplicate this code.
     pub fn set_ability(&mut self, filter: AbilityFilter) -> Self {
         self.ability = Some(filter);
         *self
@@ -284,6 +356,11 @@ impl FrameFilter {
 
     pub fn set_gender(&mut self, filter: GenderFilter) -> Self {
         self.gender = Some(filter);
+        *self
+    }
+
+    pub fn set_nature(&mut self, filter: NatureFilter) -> Self {
+        self.nature = Some(filter);
         *self
     }
 }
@@ -326,7 +403,7 @@ mod test {
     }
 
     #[test]
-    fn test_iv_test() {
+    fn test_iv_filter() {
         let iv = SingleIVFilter::new_at_least(IVJudgment::PrettyGood);
         assert!(iv.test(&11));
         assert!(iv.test(&31));
@@ -340,7 +417,7 @@ mod test {
     }
 
     #[test]
-    fn test_shiny_test() {
+    fn test_shiny_filter() {
         assert!(ShinyFilter::Shiny.test(&Shininess::Square));
         assert!(ShinyFilter::Shiny.test(&Shininess::Star));
         assert!(!ShinyFilter::Shiny.test(&Shininess::None));
@@ -351,21 +428,38 @@ mod test {
     }
 
     #[test]
-    fn test_ability_test() {
+    fn test_ability_filter() {
         assert!(AbilityFilter::First.test(&Ability::First));
         assert!(!AbilityFilter::First.test(&Ability::Second));
         assert!(!AbilityFilter::First.test(&Ability::Hidden));
     }
 
     #[test]
-    fn test_gender_test() {
+    fn test_gender_filter() {
         assert!(GenderFilter::Male.test(&Gender::Male));
         assert!(!GenderFilter::Male.test(&Gender::Female));
         assert!(!GenderFilter::Male.test(&Gender::Genderless));
     }
 
     #[test]
+    fn test_nature_filter() {
+        assert!(
+            NatureFilter::from_natures(vec![Nature::Hardy, Nature::Timid, Nature::Relaxed,])
+                .test(&Nature::Timid)
+        );
+        assert!(!NatureFilter::from_natures(vec![Nature::Hardy]).test(&Nature::Timid));
+    }
+
+    #[test]
+    fn test_nature_disallows_all_by_default() {
+        assert!(!NatureFilter::from_vec(Vec::new()).test(&Nature::Timid));
+        assert!(!NatureFilter::new().test(&Nature::Timid));
+    }
+
+    #[test]
     fn test_valid_frame_filter() {
+        let natures = NatureFilter::from_natures(vec![Nature::Timid, Nature::Bold]);
+
         let f = FrameFilter::new()
             .set_ability(AbilityFilter::Second)
             .set_gender(GenderFilter::Male)
@@ -377,7 +471,8 @@ mod test {
                 None,
                 None,
                 Some(SingleIVFilter::new_at_least(IVJudgment::Best)),
-            );
+            )
+            .set_nature(natures);
 
         assert_eq!(
             f,
@@ -398,7 +493,8 @@ mod test {
                     })
                 )),
                 ability: Some(AbilityFilter::Second),
-                gender: Some(GenderFilter::Male)
+                gender: Some(GenderFilter::Male),
+                nature: Some(natures)
             }
         )
     }

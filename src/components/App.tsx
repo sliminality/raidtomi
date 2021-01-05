@@ -117,6 +117,7 @@ export function App(): JSX.Element {
                         ...state.filters,
                         gender: undefined,
                         ability: undefined,
+                        nature: undefined,
                     },
                 }),
             }
@@ -138,6 +139,7 @@ export function App(): JSX.Element {
                     ...state.filters,
                     gender: undefined,
                     ability: undefined,
+                    nature: undefined,
                 },
             }
             setState(nextState)

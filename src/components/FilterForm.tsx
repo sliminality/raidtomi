@@ -6,8 +6,9 @@ import { StyleSheet, css } from "aphrodite/no-important"
 import crate from "../../crate/Cargo.toml"
 import * as den from "../helpers/den"
 import * as ability from "../helpers/ability"
-import { Switcher } from "./Switcher"
 import { IVFilter } from "./IVFilter"
+import { NatureFilter } from "./NatureFilter"
+import { Switcher } from "./Switcher"
 
 import type { AbilityFilter, ShinyFilter } from "../../crate/pkg/raidtomi"
 import type { AbilityName } from "../helpers/ability"
@@ -325,6 +326,10 @@ export function FilterForm({
             <IVFilter
                 value={value.iv}
                 onChange={ivs => updateValue({ iv: ivs })}
+            />
+            <NatureFilter
+                value={value.nature}
+                onChange={nature => updateValue({ nature })}
             />
         </div>
     )

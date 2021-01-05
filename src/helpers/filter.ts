@@ -3,6 +3,8 @@
  */
 import crate from "../../crate/Cargo.toml"
 
+import * as natureHelpers from "./nature"
+
 import type {
     FrameFilter,
     ShinyFilter,
@@ -12,6 +14,7 @@ import type {
     RangeDirection,
     SingleIVFilter,
 } from "../../crate/pkg/raidtomi"
+import type { NatureFilterData } from "./nature"
 
 // We need a serializable representation of SingleIVFilter, since the crate import
 // is memory-managed by Rust.
@@ -32,6 +35,7 @@ export type Filters = {
     ]
     ability: AbilityFilter | undefined
     gender: GenderFilter | undefined
+    nature: NatureFilterData | undefined
 }
 
 const LOCAL_FILTER_KEY = "filter"
@@ -49,6 +53,7 @@ export function createDefaultFilters(): Filters {
             ),
             ability: parsed.ability === null ? undefined : parsed.ability,
             gender: parsed.gender === null ? undefined : parsed.gender,
+            nature: parsed.nature === null ? undefined : parsed.nature,
         }
     }
     return {
@@ -56,6 +61,7 @@ export function createDefaultFilters(): Filters {
         iv: [undefined, undefined, undefined, undefined, undefined, undefined],
         ability: undefined,
         gender: undefined,
+        nature: undefined,
     }
 }
 
@@ -87,6 +93,9 @@ export const createFilter = (filter: Filters): FrameFilter => {
     }
     if (filter.ability !== undefined) {
         ff.set_ability(filter.ability)
+    }
+    if (filter.nature !== undefined) {
+        ff.set_nature(natureHelpers.createNatureFilter(filter.nature))
     }
     return ff
 }
