@@ -1,3 +1,14 @@
+.compatibility-warning {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--medium-text-color);
+    max-width: 600px;
+    line-height: 1.4;
+    text-align: center;
+}
+
 :root {
     /* Colors */
     --dark-base: 25, 23, 17;
