@@ -7,6 +7,7 @@ import * as filter from "../helpers/filter"
 import * as frame from "../helpers/frame"
 import * as seedHelpers from "../helpers/seed"
 import * as settings from "../helpers/settings"
+import * as workerHelpers from "../helpers/worker"
 import { Button } from "./Button"
 import { DenPreview } from "./DenPreview"
 import { FilterForm } from "./FilterForm"
@@ -71,6 +72,9 @@ export function App(): JSX.Element {
         () => den.getEntriesForSettings(state.settings)(state.raid.den) || [],
         [state.raid.den, state.settings],
     )
+
+    // Web Worker for running Rust.
+    const worker = workerHelpers.useWorker({ setResult })
 
     // Disable submission if filters are invalid for the chosen raid.
     const submitError = React.useMemo(() => {
@@ -181,19 +185,13 @@ export function App(): JSX.Element {
         if (!seed) {
             return
         }
-        const raid = den.createRaid(currentEncounter)
-        const result = crate.search(
-            raid,
-            seed,
-            filter.createFilter(state.filters),
-        )
-        if (!result) {
-            setResult({ type: "err", error: undefined })
-            return
-        }
-        setResult({
-            type: "ok",
-            value: frame.createFrame(result[0], result[1]),
+        worker.postMessage({
+            type: "SEARCH_REQUEST",
+            data: {
+                currentEncounter,
+                seed,
+                filters: state.filters,
+            },
         })
     }
 

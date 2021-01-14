@@ -17,7 +17,9 @@ declare type Values<T extends unknown> = {
 
 declare function unreachable(): never
 
-declare type Result<T, E> = { type: "ok"; value: T } | { type: "err"; error: E }
+declare type Result<T, E> =
+    | { type: "ok"; value: T; error?: undefined }
+    | { type: "err"; error: E }
 
 /**
  * Overload `map` on tuples to preserve length.
