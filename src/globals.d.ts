@@ -32,3 +32,5 @@ interface Array<T> {
         [index in keyof this]: U
     }
 }
+
+declare type Assert<T extends U, U> = T
