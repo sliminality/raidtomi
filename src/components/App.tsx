@@ -16,6 +16,7 @@ import { FrameList } from "./FrameList"
 import { RaidForm } from "./RaidForm"
 import { Seed } from "./Seed"
 import { SettingsForm } from "./SettingsForm"
+import { Spinner } from "./Spinner"
 
 import type { Filters } from "../helpers/filter"
 import type { RaidData } from "../helpers/den"
@@ -228,13 +229,16 @@ export function App(): JSX.Element {
                     type="submit"
                     style="primary"
                     onClick={handleSearch}
-                    disabled={!!submitError}
+                    disabled={!!submitError || worker.isWorking}
                 >
                     Search
                 </Button>
-                <span className={css(styles.submitError)}>
+                {worker.isWorking && (
+                    <Spinner classNames={[styles.submitSpinner]} />
+                )}
+                <div className={css(styles.submitError)}>
                     {submitError && submitError.message}
-                </span>
+                </div>
             </div>
             <FrameList
                 result={result}
@@ -271,8 +275,14 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         display: "flex",
         alignItems: "center",
+
+        position: "relative", // For spinner.
     },
     submitError: {
         color: "var(--red)",
+    },
+    submitSpinner: {
+        position: "absolute",
+        right: -20, // We can't use `transform: translateX(100%)` because the keyframe rotation is implemented with `transform`.
     },
 })
