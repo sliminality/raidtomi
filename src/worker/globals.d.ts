@@ -7,7 +7,7 @@
 // import() to get the real types produced by wasm-bindgen.
 // https://github.com/rustwasm/wasm-bindgen/issues/182#issuecomment-487928242
 declare module "*.toml" {
-    const _: typeof import("../crate/pkg/raidtomi")
+    const _: typeof import("../../crate/pkg/raidtomi")
     export default _
 }
 

@@ -21,6 +21,12 @@
     "plugins": ["react", "@typescript-eslint"],
     "rules": {
         "react/display-name": "off",
-        "@typescript-eslint/no-inferrable-types": "off"
+        "@typescript-eslint/no-inferrable-types": "off",
+        "@typescript-eslint/no-unused-vars": [
+            "error",
+            {
+                "varsIgnorePattern": "(^_.+|^Assert)"
+            }
+        ]
     }
 }
