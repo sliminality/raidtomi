@@ -14,6 +14,8 @@ pub struct Mon {
     spe: u8,
     spa: u8,
     spd: u8,
+    item: (u16, u16),
+    /// Held item.
     gender_ratio: u8,
     ability_1: u16,
     ability_2: u16,
@@ -38,6 +40,7 @@ impl Mon {
         spe: u8,
         spa: u8,
         spd: u8,
+        item: (u16, u16),
         gender_ratio: u8,
         ability_1: u16,
         ability_2: u16,
@@ -53,6 +56,7 @@ impl Mon {
             spe,
             spa,
             spd,
+            item,
             gender_ratio,
             ability_1,
             ability_2,
@@ -71,6 +75,7 @@ impl Mon {
             spe: buf[3],
             spa: buf[4],
             spd: buf[5],
+            item: (buf[12] as u16, buf[14] as u16),
             gender_ratio: buf[18],
             ability_1: (buf[25] as u16) << 8 | buf[24] as u16,
             ability_2: (buf[27] as u16) << 8 | buf[26] as u16,
@@ -86,13 +91,14 @@ impl fmt::Display for Mon {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "Mon::new({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})",
+            "Mon::new({}, {}, {}, {}, {}, {}, {:?}, {}, {}, {}, {}, {}, {}, {})",
             self.hp,
             self.atk,
             self.def,
             self.spe,
             self.spa,
             self.spd,
+            self.item,
             self.gender_ratio,
             self.ability_1,
             self.ability_2,
@@ -188,7 +194,7 @@ mod test {
     use super::*;
 
     #[test]
-    #[ignore]
+    #[cfg(skip)]
     fn print_info() {
         let table = PersonalTable::from_bytes("resources/personal").unwrap();
         println!("{}", table);
@@ -209,6 +215,7 @@ mod test {
                 spe: 45,
                 spa: 65,
                 spd: 65,
+                item: (0, 0),
                 gender_ratio: 31,
                 ability_1: 65,
                 ability_2: 65,
@@ -229,6 +236,7 @@ mod test {
                 spe: 130,
                 spa: 145,
                 spd: 95,
+                item: (0, 0),
                 gender_ratio: 255,
                 ability_1: 46,
                 ability_2: 46,
@@ -249,6 +257,7 @@ mod test {
                 spe: 0,
                 spa: 0,
                 spd: 0,
+                item: (0, 0),
                 gender_ratio: 255,
                 ability_1: 0,
                 ability_2: 0,
@@ -274,6 +283,7 @@ mod test {
                 spe: 51,
                 spa: 44,
                 spd: 55,
+                item: (0, 0),
                 gender_ratio: 127,
                 ability_1: 53,
                 ability_2: 119,
@@ -294,6 +304,7 @@ mod test {
                 spe: 56,
                 spa: 44,
                 spd: 55,
+                item: (0, 0),
                 gender_ratio: 127,
                 ability_1: 53,
                 ability_2: 119,
@@ -314,6 +325,7 @@ mod test {
                 spe: 41,
                 spa: 44,
                 spd: 55,
+                item: (239, 239),
                 gender_ratio: 127,
                 ability_1: 53,
                 ability_2: 119,
