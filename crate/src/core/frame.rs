@@ -175,8 +175,8 @@ impl FrameGenerator {
         // PID is usually correct for non-shiny mons, but many not be correct
         // for shiny mons.
         match self.raid.get_shiny_pool() {
-            ShinyPool::Locked(is_shiny) if !is_shiny => Shininess::None,
-            ShinyPool::Locked(_) => match FrameGenerator::get_shiny_value(pid, tidsid) {
+            ShinyPool::Locked(false) => Shininess::None,
+            ShinyPool::Locked(true) => match FrameGenerator::get_shiny_value(pid, tidsid) {
                 sv if sv >= 16 => Shininess::Square,
                 sv if sv == 0 => Shininess::Square,
                 _ => Shininess::Star,
@@ -191,7 +191,7 @@ impl FrameGenerator {
 
     /// Calculates the shiny value (SV) of the mon based on the temporary TID/SID.
     #[inline]
-    fn get_shiny_value(pid: u32, tidsid: u32) -> u16 {
+    pub fn get_shiny_value(pid: u32, tidsid: u32) -> u16 {
         let split_xor = |n: u32| {
             let msbs = n >> 16;
             let lsbs = n & 0xffff;
@@ -207,7 +207,7 @@ impl FrameGenerator {
         let mut i = 0;
         while i < self.raid.get_min_flawless_ivs() {
             // Pick an IV, modding by 7 until less than 6.
-            let stat = self.rng.next_int_max(6, 0x7) as usize;
+            let stat = self.rng.next_int_max(6) as usize;
             if let None = ivs[stat] {
                 ivs[stat] = Some(31);
                 i += 1;
@@ -236,7 +236,7 @@ impl FrameGenerator {
     fn get_ability(&mut self) -> Ability {
         match self.raid.get_ability_pool() {
             AbilityPool::Locked(ability) => ability,
-            AbilityPool::Random => match self.rng.next_int_max(3, 0x3) {
+            AbilityPool::Random => match self.rng.next_int_max(3) {
                 n if n == 0 => Ability::First,
                 n if n == 1 => Ability::Second,
                 n if n == 2 => Ability::Hidden,
@@ -260,7 +260,7 @@ impl FrameGenerator {
                 ratio if ratio == 254 => Gender::Female,     // Mon is always female.
                 ratio if ratio == 0 => Gender::Male,         // Mon is always male.
                 // Roll for gender if species isn't locked.
-                _ if self.rng.next_int_max(253, 0xff) + 1 < gender_ratio as u32 => Gender::Female,
+                _ if self.rng.next_int_max(253) + 1 < gender_ratio as u32 => Gender::Female,
                 _ => Gender::Male,
             },
         }
@@ -272,7 +272,7 @@ impl FrameGenerator {
         if self.raid.get_species() == 849 {
             get_toxtricity_nature(&mut self.rng, self.raid.get_alt_form() == 0)
         } else {
-            let nature = self.rng.next_int_max(25, 0x1f);
+            let nature = self.rng.next_int_max(25);
             Nature::from_u32(nature).unwrap()
         }
     }

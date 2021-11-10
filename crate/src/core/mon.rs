@@ -104,10 +104,10 @@ static TOXTRICITY_LOW_KEY_NATURES: [Nature; 13] = [
 /// Generates a Toxtricity nature.
 pub fn get_toxtricity_nature(rng: &mut Rng, is_amped: bool) -> Nature {
     if is_amped {
-        let index = rng.next_int_max(TOXTRICITY_AMPED_NATURES.len() as u32, 0x31);
+        let index = rng.next_int_max(TOXTRICITY_AMPED_NATURES.len() as u32);
         TOXTRICITY_AMPED_NATURES[index as usize]
     } else {
-        let index = rng.next_int_max(TOXTRICITY_LOW_KEY_NATURES.len() as u32, 0x31);
+        let index = rng.next_int_max(TOXTRICITY_LOW_KEY_NATURES.len() as u32);
         TOXTRICITY_LOW_KEY_NATURES[index as usize]
     }
 }

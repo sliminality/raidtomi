@@ -16,6 +16,21 @@ fn rotl(x: u64, k: u8) -> u64 {
     (x << k) | (x >> (64 - k))
 }
 
+/// Returns an integer mask for the given number.
+/// The mask is m = 2^k - 1 for the smallest k such that m >= n, the given number.
+/// Thanks to AdmiralFish's RaidFinder for this logic.
+macro_rules! mask {
+    ($n:expr) => {{
+        let mut m = $n - 1;
+        m |= m >> 1;
+        m |= m >> 2;
+        m |= m >> 4;
+        m |= m >> 8;
+        m |= m >> 16;
+        m
+    }};
+}
+
 impl Rng {
     /// Creates a new RNG instance with the given seed.
     pub fn new(seed: u64) -> Self {
@@ -28,12 +43,15 @@ impl Rng {
         self.1 = MAGIC_SEED;
     }
 
-    /// Returns a random 64-bit value, masked, less than the desired maximum.
+    /// Returns a random 32-bit value less than the desired maximum.
+    /// At each iteration, if the value is greater than the max, we mod it by the smallest power of 2 greater than the number.
     #[inline]
-    pub fn next_int_max(&mut self, max: u32, mask: u32) -> u32 {
-        // Mod the result by the mask until the result is small enough.
+    pub fn next_int_max(&mut self, max: u32) -> u32 {
+        // Compute the bit mask for the next largest power of 2.
+        let mask = mask!(max);
         let mut result = self.next_int(mask);
         while result >= max {
+            // Mod the result by the mask until the result is small enough.
             result = self.next_int(mask);
         }
         result
@@ -90,6 +108,18 @@ mod tests {
         assert_eq!(Rng::new(0xc816c270fd1cd8fd).next(), 5384462261710111576);
     }
 
+    /// Test mask generation.
+    #[test]
+    fn test_mask() {
+        assert_eq!(mask!(253), 0xFF);
+        assert_eq!(mask!(25), 0x1F);
+        assert_eq!(mask!(6), 0x7);
+        assert_eq!(mask!(3), 0x3);
+        assert_eq!(mask!(12), 15);
+        assert_eq!(mask!(13), 15);
+        assert_eq!(mask!(100), 0x7F);
+    }
+
     /// Test masking.
     #[test]
     fn test_next_int() {
@@ -114,9 +144,9 @@ mod tests {
     fn test_next_int_max() {
         let seed = 0x973bb011937bc1a8;
         let mut rng = Rng::new(seed);
-        assert_eq!(rng.next_int_max(6, 0x7), 3);
+        assert_eq!(rng.next_int_max(6), 3);
         rng.reset(seed);
-        assert_eq!(rng.next_int_max(6, 0x1), 1);
+        assert_eq!(rng.next_int_max(8192) <= 8192, true);
     }
 
     #[test]
