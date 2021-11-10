@@ -90,7 +90,8 @@ impl FrameGenerator {
     }
 
     /// Resets the seed to compute the next frame.
-    fn advance_seed(&mut self, seed: u64) {
+    fn advance_seed(&mut self) {
+        let seed = Rng::get_seed_at_offset(self.seed, 1);
         self.rng.reset(seed);
         self.seed = seed;
         self.offset += 1;
@@ -288,8 +289,7 @@ impl Iterator for FrameGenerator {
         } else {
             self.get_frame()
         };
-        let next_seed = Rng::get_seed_at_offset(self.seed, 1);
-        self.advance_seed(next_seed);
+        self.advance_seed();
         Some(result)
     }
 }
