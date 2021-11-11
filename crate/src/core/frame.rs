@@ -110,7 +110,7 @@ impl FrameGenerator {
                 return FrameResult::Fail;
             }
         }
-        let ivs = self.get_ivs();
+        let ivs = FrameGenerator::get_ivs(&mut self.rng, self.raid.get_min_flawless_ivs());
         if let Some(f) = filter.ivs {
             if !f.test(&ivs) {
                 return FrameResult::Fail;
@@ -148,7 +148,7 @@ impl FrameGenerator {
     /// Returns the current frame, mutating the RNG state.
     fn get_frame(&mut self) -> FrameResult {
         let shiny = self.get_shininess();
-        let ivs = self.get_ivs();
+        let ivs = FrameGenerator::get_ivs(&mut self.rng, self.raid.get_min_flawless_ivs());
         let ability = self.get_ability();
         let gender = self.get_gender();
         let nature = self.get_nature();
@@ -202,13 +202,13 @@ impl FrameGenerator {
     }
 
     /// Calculates IVs, taking into account the number of best IVs from the star count.
-    fn get_ivs(&mut self) -> IVs {
+    pub fn get_ivs(rng: &mut Rng, min_flawless_ivs: u8) -> IVs {
         // Set flawless IVs.
         let mut ivs: [Option<u32>; 6] = [None, None, None, None, None, None];
         let mut i = 0;
-        while i < self.raid.get_min_flawless_ivs() {
+        while i < min_flawless_ivs {
             // Pick an IV, modding by 7 until less than 6.
-            let stat = self.rng.next_int_max(6) as usize;
+            let stat = rng.next_int_max(6) as usize;
             if let None = ivs[stat] {
                 ivs[stat] = Some(31);
                 i += 1;
@@ -219,7 +219,7 @@ impl FrameGenerator {
         for j in 0..6 {
             if let None = ivs[j] {
                 // We can use 31 as both the max and the mask, because 31 in binary is 1111.
-                ivs[j] = Some(self.rng.next_int(31))
+                ivs[j] = Some(rng.next_int(31))
             }
         }
 

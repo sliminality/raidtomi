@@ -1,9 +1,11 @@
 //! Random number generator.
 //! Based on the [xoroshiro128+](http://prng.di.unimi.it/xoroshiro128plus.c) RNG.
+use wasm_bindgen::prelude::*;
 
 use std::num::Wrapping as w;
 
 /// Keeps track of the state.
+#[wasm_bindgen]
 #[derive(PartialEq, Eq, Debug)]
 pub struct Rng(u64, u64);
 
@@ -37,10 +39,21 @@ impl Rng {
         Rng(seed, MAGIC_SEED)
     }
 
+    /// Creates a new RNG instance with the given full state.
+    pub fn from_state(s0: u64, s1: u64) -> Self {
+        Rng(s0, s1)
+    }
+
     /// Reset generator with a new seed.
     pub fn reset(&mut self, seed: u64) {
         self.0 = seed;
         self.1 = MAGIC_SEED;
+    }
+
+    /// Reset generator with a new full state.
+    pub fn reset_state(&mut self, s0: u64, s1: u64) {
+        self.0 = s0;
+        self.1 = s1;
     }
 
     /// Returns a random 32-bit value less than the desired maximum.
@@ -65,7 +78,7 @@ impl Rng {
 
     /// Advance the RNG according to the current state.
     #[inline]
-    fn next(&mut self) -> u64 {
+    pub fn next(&mut self) -> u64 {
         let s0 = w(self.0);
         let mut s1 = w(self.1);
         let result = s0 + s1;
@@ -80,6 +93,11 @@ impl Rng {
     /// Returns the seed `i` frames ahead of the given seed.
     pub fn get_seed_at_offset(seed: u64, index: usize) -> u64 {
         (w(seed) + w(MAGIC_SEED) * w(index as u64)).0
+    }
+
+    /// Returns the current state of the RNG.
+    pub fn get_state(&self) -> (u64, u64) {
+        (self.0, self.1)
     }
 }
 
