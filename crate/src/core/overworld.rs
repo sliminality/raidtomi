@@ -63,22 +63,18 @@ pub struct Spawn {
 
 impl fmt::Display for Spawn {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
+        write!(
+            f,
+            "{advance:>5} │ {s0:16x}  {s1:16x} │ ",
+            advance = self.advance,
+            s0 = self.full_seed.0,
+            s1 = self.full_seed.1,
+        )
+        .and_then(|_| match self {
             Spawn {
                 spawn: SpawnType::Static,
                 ..
-            } => write!(
-                f,
-                "{}  {:x}  {:x}\t{}",
-                self.advance, self.full_seed.0, self.full_seed.1, self.dynamic,
-            )
-            .and_then(|_| {
-                if let Some(m) = &self.mark {
-                    write!(f, "\t{}", m)
-                } else {
-                    write!(f, "-")
-                }
-            }),
+            } => write!(f, "{dyn}", dyn = self.dynamic,),
 
             Spawn {
                 spawn:
@@ -90,23 +86,20 @@ impl fmt::Display for Spawn {
                 ..
             } => write!(
                 f,
-                "{}  {:x}  {:x}\t{} {} {}\t{}",
-                self.advance,
-                self.full_seed.0,
-                self.full_seed.1,
-                slot,
-                level,
-                brilliant,
-                self.dynamic,
-            )
-            .and_then(|_| {
-                if let Some(m) = &self.mark {
-                    write!(f, "\t{}", m)
-                } else {
-                    write!(f, "-")
-                }
-            }),
-        }
+                "{slot:3} {level:2} {brilliant:3} │ {dyn}",
+                slot = slot,
+                level = level,
+                brilliant = brilliant,
+                dyn = self.dynamic,
+            ),
+        })
+        .and_then(|_| {
+            if let Some(m) = &self.mark {
+                write!(f, "{:12}", m)
+            } else {
+                write!(f, "{:12}", "--")
+            }
+        })
     }
 }
 
@@ -136,8 +129,12 @@ impl fmt::Display for DynamicStats {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,
-            "{:8x}  {:?}\t{}  {}",
-            self.pid, self.nature, self.ability, self.ivs
+            "{pid:8x} │ {nature:<7}  {ability:2} {ivs:<17} │ ",
+            pid = self.pid,
+            // Need to do all this eta-expansion to get widths and alignment to work correctly.
+            nature = format!("{:?}", self.nature),
+            ability = format!("{}", self.ability),
+            ivs = format!("{}", self.ivs),
         )
     }
 }
