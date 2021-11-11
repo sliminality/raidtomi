@@ -81,24 +81,18 @@ function SingleIVFilter({
                 onChange(undefined)
                 return
             } else if (direction === crate.RangeDirection.AtMost) {
-                onChange({
+                onChange([
                     direction,
                     // If setting to At Most, default to No Good.
-                    judgment:
-                        value === undefined
-                            ? crate.IVJudgment.NoGood
-                            : value.judgment,
-                })
+                    value === undefined ? crate.IVJudgment.NoGood : value[1],
+                ])
                 return
             } else if (direction === crate.RangeDirection.AtLeast) {
-                onChange({
+                onChange([
                     direction,
                     // If setting to At Least, default to Best.
-                    judgment:
-                        value === undefined
-                            ? crate.IVJudgment.Best
-                            : value.judgment,
-                })
+                    value === undefined ? crate.IVJudgment.Best : value[1],
+                ])
                 return
             } else {
                 return unreachable()
@@ -115,12 +109,15 @@ function SingleIVFilter({
                 onChange(undefined)
                 return
             }
-            onChange({
-                direction: value
-                    ? value.direction
-                    : crate.RangeDirection.AtLeast,
-                judgment: updatedValue,
-            })
+            // If user chooses "No Good", set the range direction to "At Most".
+            const updatedDirection =
+                updatedValue === crate.IVJudgment.NoGood
+                    ? crate.RangeDirection.AtMost
+                    : value
+                    ? value[0]
+                    : crate.RangeDirection.AtLeast
+
+            onChange([updatedDirection, updatedValue])
         },
         [value, onChange],
     )
@@ -134,7 +131,7 @@ function SingleIVFilter({
                     title={<ScreenReaderText>Direction</ScreenReaderText>}
                     groupName={`filter-iv-range-direction-${name}`}
                     allowDeselect={false}
-                    value={value ? value.direction : ANY}
+                    value={value ? value[0] : ANY}
                     items={[
                         {
                             item: ANY,
@@ -155,7 +152,7 @@ function SingleIVFilter({
                 />
                 <select
                     name="iv-judgment"
-                    value={value ? value.judgment : "-"}
+                    value={value ? value[1] : "-"}
                     onChange={handleJudgmentChange}
                 >
                     {[

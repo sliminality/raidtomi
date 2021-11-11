@@ -18,10 +18,10 @@ import type { NatureFilterData } from "./nature"
 
 // We need a serializable representation of SingleIVFilter, since the crate import
 // is memory-managed by Rust.
-export type SingleIVFilterData = {
-    judgment: IVJudgment
-    direction: RangeDirection
-}
+export type SingleIVFilterData = [
+    direction: RangeDirection,
+    judgment: IVJudgment,
+]
 
 export type Filters = {
     shiny: ShinyFilter | undefined
@@ -38,7 +38,7 @@ export type Filters = {
     nature: NatureFilterData | undefined
 }
 
-const LOCAL_FILTER_KEY = "filter"
+const LOCAL_FILTER_KEY = "filter:v2"
 
 export function createDefaultFilters(): Filters {
     const serializedFilters = localStorage.getItem(LOCAL_FILTER_KEY)
@@ -75,9 +75,9 @@ const createSingleIVFilter = (
     if (!f) {
         return f
     }
-    return f.direction === crate.RangeDirection.AtLeast
-        ? crate.SingleIVFilter.new_at_least(f.judgment)
-        : crate.SingleIVFilter.new_at_most(f.judgment)
+    return f[0] === crate.RangeDirection.AtLeast
+        ? crate.SingleIVFilter.new_at_least(f[0])
+        : crate.SingleIVFilter.new_at_most(f[0])
 }
 
 export const createFilter = (filter: Filters): FrameFilter => {

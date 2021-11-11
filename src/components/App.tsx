@@ -91,8 +91,8 @@ export function App(): JSX.Element {
         const numFilteredImperfectIVs = state.filters.iv.filter(
             iv =>
                 iv &&
-                iv.direction === crate.RangeDirection.AtMost &&
-                iv.judgment !== crate.IVJudgment.Best,
+                iv[0] === crate.RangeDirection.AtMost &&
+                iv[1] !== crate.IVJudgment.Best,
         ).length
 
         if (numFilteredImperfectIVs > maxImperfectIVs) {
