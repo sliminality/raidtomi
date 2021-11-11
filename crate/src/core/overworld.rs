@@ -19,7 +19,7 @@ pub struct Player {
 
 /// Min and max level range, inclusive.
 #[derive(PartialEq, Eq, Debug, Clone, Copy)]
-struct Level {
+pub struct Level {
     min: u32,
     max: u32,
 }
@@ -27,7 +27,7 @@ struct Level {
 /// Method of encounter.
 #[derive(PartialEq, Eq, Debug, Clone, Copy)]
 #[allow(dead_code)]
-enum EncounterMethod {
+pub enum EncounterMethod {
     Static,
     Fishing {
         level: Level,
@@ -63,18 +63,50 @@ pub struct Spawn {
 
 impl fmt::Display for Spawn {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "{}  {:x}  {:x}\t{}",
-            self.advance, self.full_seed.0, self.full_seed.1, self.dynamic,
-        )
-        .and_then(|_| {
-            if let Some(m) = &self.mark {
-                write!(f, "\t{}", m)
-            } else {
-                write!(f, "-")
-            }
-        })
+        match self {
+            Spawn {
+                spawn: SpawnType::Static,
+                ..
+            } => write!(
+                f,
+                "{}  {:x}  {:x}\t{}",
+                self.advance, self.full_seed.0, self.full_seed.1, self.dynamic,
+            )
+            .and_then(|_| {
+                if let Some(m) = &self.mark {
+                    write!(f, "\t{}", m)
+                } else {
+                    write!(f, "-")
+                }
+            }),
+
+            Spawn {
+                spawn:
+                    SpawnType::Random {
+                        slot,
+                        level,
+                        brilliant,
+                    },
+                ..
+            } => write!(
+                f,
+                "{}  {:x}  {:x}\t{} {} {}\t{}",
+                self.advance,
+                self.full_seed.0,
+                self.full_seed.1,
+                slot,
+                level,
+                brilliant,
+                self.dynamic,
+            )
+            .and_then(|_| {
+                if let Some(m) = &self.mark {
+                    write!(f, "\t{}", m)
+                } else {
+                    write!(f, "-")
+                }
+            }),
+        }
     }
 }
 
@@ -133,11 +165,16 @@ impl Iterator for OverworldState {
 
 impl OverworldState {
     /// Create a new overworld state.
-    pub fn new(player: Player, has_weather: bool, seed: (u64, u64)) -> Self {
+    pub fn new(
+        player: Player,
+        has_weather: bool,
+        seed: (u64, u64),
+        encounter: EncounterMethod,
+    ) -> Self {
         Self {
             player,
             has_weather,
-            encounter: EncounterMethod::Static,
+            encounter,
             rng: Rng::from_state(seed.0, seed.1),
             seed,
             advances: 0,
@@ -367,6 +404,7 @@ mod tests {
             },
             true,
             (0x5e5c928d61792fed, 0xed608999e1410aa9),
+            EncounterMethod::Static,
         );
 
         for spawn in state.take(10) {
@@ -385,6 +423,7 @@ mod tests {
             },
             true,                                     // has_weather
             (0x5e5c928d61792fed, 0xed608999e1410aa9), // seed
+            EncounterMethod::Static,
         );
 
         assert_eq!(
