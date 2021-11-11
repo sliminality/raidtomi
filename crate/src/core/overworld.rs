@@ -65,9 +65,16 @@ impl fmt::Display for Spawn {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,
-            "{}  {:x}  {:x}\t{}\t{:?}",
-            self.advance, self.full_seed.0, self.full_seed.1, self.dynamic, self.mark
+            "{}  {:x}  {:x}\t{}",
+            self.advance, self.full_seed.0, self.full_seed.1, self.dynamic,
         )
+        .and_then(|_| {
+            if let Some(m) = &self.mark {
+                write!(f, "\t{}", m)
+            } else {
+                write!(f, "-")
+            }
+        })
     }
 }
 
@@ -95,11 +102,7 @@ struct DynamicStats {
 
 impl fmt::Display for DynamicStats {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "{:08x}  {:08x}\t{:?}\t{}  {}",
-            self.ec, self.pid, self.nature, self.ability, self.ivs
-        )
+        write!(f, "{:?}\t{}  {}", self.nature, self.ability, self.ivs)
     }
 }
 
@@ -348,6 +351,25 @@ impl OverworldState {
 mod tests {
     use super::*;
     use num_traits::FromPrimitive;
+
+    #[test]
+    /// Helper function for quickly dumping the next few advances.
+    fn print_advances() {
+        let state = OverworldState::new(
+            Player {
+                tid: 57649,
+                sid: 60914,
+                has_shiny_charm: true,
+                has_mark_charm: true,
+            },
+            true,
+            (0x5e5c928d61792fed, 0xed608999e1410aa9),
+        );
+
+        for spawn in state.take(10) {
+            println!("{}", spawn);
+        }
+    }
 
     #[test]
     fn test_static_encounter() {

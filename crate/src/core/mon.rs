@@ -192,6 +192,15 @@ pub enum Mark {
     Fishing,
 }
 
+impl fmt::Display for Mark {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Mark::Personality(m) => write!(f, "{:?}", m),
+            m => write!(f, "{:?}", m),
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::Nature;
