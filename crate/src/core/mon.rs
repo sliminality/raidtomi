@@ -1,12 +1,23 @@
-use super::rng::Rng;
 ///! Characteristics of a mon.
+use super::rng::Rng;
 use num_derive::{FromPrimitive, ToPrimitive};
+use std::fmt;
 use wasm_bindgen::prelude::*;
 
 /// Individual Values for a mon's stats.
 #[wasm_bindgen]
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
 pub struct IVs(pub u32, pub u32, pub u32, pub u32, pub u32, pub u32);
+
+impl fmt::Display for IVs {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "{}/{}/{}/{}/{}/{}",
+            self.0, self.1, self.2, self.3, self.4, self.5
+        )
+    }
+}
 
 /// Whether a mon is shiny, and if so, what type of shiny.
 #[wasm_bindgen]
@@ -17,6 +28,17 @@ pub enum Shininess {
     Square,
 }
 
+impl fmt::Display for Shininess {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let symbol = match self {
+            Shininess::None => "",
+            Shininess::Star => "★",
+            Shininess::Square => "■",
+        };
+        write!(f, "{}", symbol)
+    }
+}
+
 /// What ability a mon has.
 /// Not all mons have a second ability or HA.
 #[wasm_bindgen]
@@ -25,6 +47,20 @@ pub enum Ability {
     First,
     Second,
     Hidden,
+}
+
+impl fmt::Display for Ability {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Ability::First => "1",
+                Ability::Second => "2",
+                Ability::Hidden => "HA",
+            }
+        )
+    }
 }
 
 /// What gender a mon has.
