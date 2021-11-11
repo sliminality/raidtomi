@@ -47,11 +47,32 @@ const submitErrorReason = {
     },
 }
 
+const useAppState = (): [
+    State,
+    React.Dispatch<React.SetStateAction<State>>,
+] => {
+    const [state, setState] = React.useState<State>(createDefaultState())
+    const setAppState = React.useCallback(
+        (nextState: State | ((prevState: State) => State)) => {
+            const update =
+                typeof nextState === "function" ? nextState(state) : nextState
+
+            setState(update)
+
+            den.saveRaid(update.raid)
+            filter.saveFilters(update.filters)
+            settings.saveSettings(update.settings)
+        },
+        [setState, state],
+    )
+    return [state, setAppState]
+}
+
 export function App(): JSX.Element {
     /**
      * State and lifecycle.
      */
-    const [state, setState] = React.useState<State>(createDefaultState())
+    const [state, setState] = useAppState()
     const [seed, setSeed] = React.useState<BigInt | undefined>(
         seedHelpers.createDefaultSeed(),
     )
@@ -128,10 +149,8 @@ export function App(): JSX.Element {
             }
 
             setState(nextState)
-            settings.saveSettings(nextState.settings)
-            filter.saveFilters(nextState.filters)
         },
-        [state],
+        [state, setState],
     )
 
     const updateRaid = React.useCallback(
@@ -148,10 +167,8 @@ export function App(): JSX.Element {
                 },
             }
             setState(nextState)
-            filter.saveFilters(nextState.filters)
-            den.saveRaid(nextState.raid)
         },
-        [state],
+        [state, setState],
     )
 
     const updateFilters = React.useCallback(
@@ -161,9 +178,8 @@ export function App(): JSX.Element {
                 filters: { ...state.filters, ...update },
             }
             setState(nextState)
-            filter.saveFilters(nextState.filters)
         },
-        [state],
+        [state, setState],
     )
 
     const updateSeed = React.useCallback((update: BigInt | undefined) => {
