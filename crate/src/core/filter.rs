@@ -14,9 +14,9 @@ pub trait Filter<T> {
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
 pub enum IVJudgment {
     NoGood,     // 0
-    Decent,     // 1-10
-    PrettyGood, // 11-20
-    VeryGood,   // 21-29
+    Decent,     // 1-15
+    PrettyGood, // 16-25
+    VeryGood,   // 26-29
     Fantastic,  // 30
     Best,       // 31
 }
@@ -25,9 +25,9 @@ impl PartialEq<u32> for IVJudgment {
     fn eq(&self, other: &u32) -> bool {
         match self {
             Self::NoGood => *other == 0,
-            Self::Decent => *other >= 1 && *other <= 10,
-            Self::PrettyGood => *other >= 11 && *other <= 20,
-            Self::VeryGood => *other >= 21 && *other <= 29,
+            Self::Decent => *other >= 1 && *other <= 15,
+            Self::PrettyGood => *other >= 16 && *other <= 25,
+            Self::VeryGood => *other >= 26 && *other <= 29,
             Self::Fantastic => *other == 30,
             Self::Best => *other == 31,
         }
@@ -51,25 +51,25 @@ impl PartialOrd<u32> for IVJudgment {
             Self::Decent => {
                 if *other < 1 {
                     Some(Ordering::Greater)
-                } else if (1..=10).contains(other) {
+                } else if (1..=15).contains(other) {
                     Some(Ordering::Equal)
                 } else {
                     Some(Ordering::Less)
                 }
             }
             Self::PrettyGood => {
-                if *other < 11 {
+                if *other < 16 {
                     Some(Ordering::Greater)
-                } else if (11..=20).contains(other) {
+                } else if (16..=25).contains(other) {
                     Some(Ordering::Equal)
                 } else {
                     Some(Ordering::Less)
                 }
             }
             Self::VeryGood => {
-                if *other < 21 {
+                if *other < 26 {
                     Some(Ordering::Greater)
-                } else if (21..=29).contains(other) {
+                } else if (26..=29).contains(other) {
                     Some(Ordering::Equal)
                 } else {
                     Some(Ordering::Less)
@@ -375,18 +375,18 @@ mod test {
         assert!(IVJudgment::NoGood < 1);
         assert!(IVJudgment::Decent == 1);
         assert!(IVJudgment::Decent == 5);
-        assert!(IVJudgment::Decent == 10);
+        assert!(IVJudgment::Decent == 15);
         assert!(IVJudgment::Decent > 0);
-        assert!(IVJudgment::Decent < 11);
-        assert!(IVJudgment::PrettyGood == 11);
-        assert!(IVJudgment::PrettyGood == 15);
+        assert!(IVJudgment::Decent < 16);
+        assert!(IVJudgment::PrettyGood == 16);
         assert!(IVJudgment::PrettyGood == 20);
-        assert!(IVJudgment::PrettyGood > 10);
-        assert!(IVJudgment::PrettyGood < 21);
-        assert!(IVJudgment::VeryGood == 21);
-        assert!(IVJudgment::VeryGood == 25);
+        assert!(IVJudgment::PrettyGood == 25);
+        assert!(IVJudgment::PrettyGood > 15);
+        assert!(IVJudgment::PrettyGood < 26);
+        assert!(IVJudgment::VeryGood == 26);
+        assert!(IVJudgment::VeryGood == 27);
         assert!(IVJudgment::VeryGood == 29);
-        assert!(IVJudgment::VeryGood > 20);
+        assert!(IVJudgment::VeryGood > 25);
         assert!(IVJudgment::VeryGood < 30);
         assert!(IVJudgment::Fantastic == 30);
         assert!(IVJudgment::Fantastic > 29);
@@ -405,7 +405,7 @@ mod test {
     #[test]
     fn test_iv_filter() {
         let iv = SingleIVFilter::new_at_least(IVJudgment::PrettyGood);
-        assert!(iv.test(&11));
+        assert!(iv.test(&16));
         assert!(iv.test(&31));
         assert!(!iv.test(&9));
         assert!(!iv.test(&0));

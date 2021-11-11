@@ -63,11 +63,11 @@ function SingleIVFilter({
             case crate.IVJudgment.Fantastic:
                 return "Fantastic (30)"
             case crate.IVJudgment.VeryGood:
-                return "Very Good (21-29)"
+                return "Very Good (26-29)"
             case crate.IVJudgment.PrettyGood:
-                return "Pretty Good (11-20)"
+                return "Pretty Good (16-24)"
             case crate.IVJudgment.Decent:
-                return "Decent (1-10)"
+                return "Decent (1-15)"
             case crate.IVJudgment.NoGood:
                 return "No Good (0)"
             default:
