@@ -180,7 +180,7 @@ impl OverworldState {
                 let slot = self.rng.next_int_max(100);
                 let level = self.get_level(level);
                 let mark = self.get_mark();
-                let brilliant = self.rng.next_int_max(100);
+                let brilliant = self.rng.next_int_max(1000);
 
                 let dynamic = self.get_current_spawn_helper();
 
@@ -221,8 +221,11 @@ impl OverworldState {
 
         // If we need to roll for the held item, account for that in the RNG state.
         match self.encounter {
-            EncounterMethod::Fishing { .. } | EncounterMethod::Overworld { .. } => {
-                self.rng.next_int_max(100);
+            EncounterMethod::Fishing { diff_held_item, .. }
+            | EncounterMethod::Overworld { diff_held_item, .. } => {
+                if diff_held_item {
+                    self.rng.next_int_max(100);
+                }
             }
             _ => {}
         }
