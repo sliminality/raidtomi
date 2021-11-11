@@ -134,7 +134,11 @@ struct DynamicStats {
 
 impl fmt::Display for DynamicStats {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?}\t{}  {}", self.nature, self.ability, self.ivs)
+        write!(
+            f,
+            "{:8x}  {:?}\t{}  {}",
+            self.pid, self.nature, self.ability, self.ivs
+        )
     }
 }
 
@@ -402,12 +406,12 @@ mod tests {
                 has_shiny_charm: true,
                 has_mark_charm: true,
             },
-            true,
-            (0x5e5c928d61792fed, 0xed608999e1410aa9),
+            false,
+            (0x3b5fd0311052d728, 0xe740f00aa3044772),
             EncounterMethod::Static,
         );
 
-        for spawn in state.take(10) {
+        for spawn in state.take(106) {
             println!("{}", spawn);
         }
     }
